@@ -90,11 +90,6 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
     private static LearnLogger log
             = LearnLogger.getLogger(MultiTheoryTreeOracle.class);
 
-//    public MultiTheoryTreeOracle(DataWordOracle membershipOracle,
-//            Map<DataType, Theory> teachers, Constants constants, 
-//            ConstraintSolver solver) {
-//    	this(membershipOracle, null, teachers, constants, solver);
-//    }
     
     public MultiTheoryTreeOracle(DataWordOracle membershipOracle, @Nullable IOOracle traceOracle,
             Map<DataType, Theory> teachers, Constants constants, 
@@ -320,13 +315,15 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
     private class GuardContext {
     	final Mapping<SymbolicDataValue, DataValue<?>> contextValuation; 
     	
-    	GuardContext(ParValuation parValuation, Word<PSymbolInstance> prefix, PIV piv) {
+    	GuardContext(ParValuation parValuation, Word<PSymbolInstance> prefix, PIV piv, Constants constants) {
     		contextValuation = new Mapping<SymbolicDataValue, DataValue<?>>();
     		DataValue<?> [] values = DataWords.valsOf(prefix);
     		piv.forEach((param, reg) 
     				-> contextValuation.put(reg, values[param.getId()-1]));
     		parValuation.forEach((param, dv) 
     				-> contextValuation.put(new SuffixValue(param.getType(), param.getId()), dv));
+    		constants.forEach((c, dv) 
+    				-> contextValuation.put(c, dv));
     	}
     	
     	public String toString() {
@@ -356,7 +353,7 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
             Map<DataValue, SDTGuard> guardMap = new LinkedHashMap<>();
 
             // setup a guard context for checking refinement/possibility to merge
-            GuardContext guardContext = new GuardContext(pval, prefix, piv);
+            GuardContext guardContext = new GuardContext(pval, prefix, piv, constants);
             SDTGuardLogic guardLogic = teach.getGuardLogic();
             // get merged guards to the set of guards they come from
             Map<SDTGuard, Set<SDTGuard>> mergedGuards = getNewGuards(sdts, guardContext, guardLogic);
@@ -503,5 +500,4 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
     	
     	return children;
     }
-
 }
