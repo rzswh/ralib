@@ -6,11 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import de.learnlib.ralib.automata.RALocation;
 import de.learnlib.ralib.automata.RegisterAutomaton;
-import de.learnlib.ralib.automata.Transition;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataType;
 import de.learnlib.ralib.data.DataValue;
@@ -22,7 +20,7 @@ import net.automatalib.words.Word;
 
 
 /**
- * First selects a symbol randomly, then concretizes it using smart methods.
+ * First selects a symbol randomly, then concretizes it accounting for the probabilities given.
  */
 public class RandomSymbolSelector extends InputSelector{ 
 
@@ -62,49 +60,47 @@ public class RandomSymbolSelector extends InputSelector{
 			Theory teacher = teachers.get(t);
 			// TODO: generics hack?
 			// TODO: add constants?
-			Set<DataValue<Object>> oldSet = DataWords.valSet(run, t);
-			// an adjustment for TCP
-			oldSet.removeAll(this.constants.values());
-			// oldSet.addAll(this.constants.getValues(t));
-			// for (int j = 0; j < i; j++) {
-			// if (vals[j].getType().equals(t)) {
-			// oldSet.add(vals[j]);
-			// }
-			// }
-			List<DataValue<Object>> old = new ArrayList<>(oldSet);
-			List<DataValue<Object>> regs = getRegisterValuesForType(run, t);
+			final Set<DataValue<Object>> oldSet = DataWords.valSet(run, t);
+			
+			List<DataValue<?>> regs = getRegisterValuesForType(run, t);
 			Double draw = rand.nextDouble();
 			if (draw <= drawRegister && !regs.isEmpty()) {
 				vals[i] = pick(regs);
 			}
 
-			List<DataValue<Object>> history = new ArrayList<>(oldSet);
+			List<DataValue<?>> history = new ArrayList<>(oldSet);
 			history.removeAll(regs);
 			if (draw > drawRegister && draw <= drawHistory + drawRegister && !history.isEmpty()) {
 				vals[i] = pick(history);
 			}
 
-			List<DataValue<Object>> related = new ArrayList<>(oldSet);
+			List<DataValue<?>> related = new ArrayList<>(oldSet);
 			related = new ArrayList<>(teacher.getAllNextValues(related));
 			if (draw > drawRegister + drawHistory && draw <= drawRegister + drawHistory + drawRelated
-					&& !related.isEmpty())
+					&& !related.isEmpty()) {
 				vals[i] = pick(related);
+			}
 
-			if (vals[i] == null)
+			if (vals[i] == null) {
+				List<DataValue<?>> old = new ArrayList<>(oldSet);
+				old.addAll(constants.values(t));
 				vals[i] = teacher.getFreshValue(old);
+			}
 
 			i++;
 		}
 		return new PSymbolInstance(ps, vals);
 	}
 
-	private <T> DataValue<T> pick(List<DataValue<T>> list) {
+	private DataValue<?> pick(List<DataValue<?>> list) {
 		return list.get(rand.nextInt(list.size()));
 	}
 
-	private List<DataValue<Object>> getRegisterValuesForType(Word<PSymbolInstance> run, DataType t) {
-		return hyp.getRegisterValuation(run).values().stream().filter(reg -> reg.getType().equals(t))
-				.map(dv -> (DataValue<Object>) dv).collect(Collectors.toList());
+	private List<DataValue<?>> getRegisterValuesForType(Word<PSymbolInstance> run, DataType t) {
+		List<DataValue<?>> values = new ArrayList<>();
+		values.addAll(hyp.getRegisterValuation(run).values());
+		values.addAll(constants.values(t));
+		return values;
 	}
 
 	private ParameterizedSymbol nextSymbol(Word<PSymbolInstance> run) {
