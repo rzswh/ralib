@@ -82,23 +82,13 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
     public boolean hasCounterexample(Word<PSymbolInstance> prefix, 
             SymbolicDecisionTree sdt1, PIV piv1, SymbolicDecisionTree sdt2, PIV piv2, 
             TransitionGuard guard, Word<PSymbolInstance> rep) {
-        
+
         log.finest("Searching for counterexample in SDTs");
         log.log(Level.FINEST, "SDT1: {0}", sdt1);
         log.log(Level.FINEST, "SDT2: {0}", sdt2);
         log.log(Level.FINEST, "Guard: {0}", guard);
-        
-        SDT _sdt1 = (SDT) sdt1;
-        SDT _sdt2 = (SDT) sdt2;
-        
-        GuardExpression expr1 = _sdt1.getAcceptingPaths();
-        GuardExpression expr2 = _sdt2.getAcceptingPaths();      
-        GuardExpression exprG = guard.getCondition();
-        boolean acceptSat = satisfiable(expr1, piv1, expr2, piv2, exprG);
-        GuardExpression expr1R =  _sdt1.getRejectingPaths();
-        GuardExpression expr2R = _sdt2.getRejectingPaths();  
-        boolean rejSat = satisfiable(expr1R, piv1, expr2R, piv2, exprG);
-        return acceptSat | rejSat;
+
+        return !areEquivalent(sdt1, piv1, guard.getCondition(), sdt2, piv2, guard.getCondition(), new Mapping<>(consts));
     }
     
     
