@@ -174,7 +174,7 @@ public class CounterexampleAnalysis {
                 resHyp.getSdt(), resHyp.getPiv(), //new PIV(location, resHyp.getParsInVars()), 
                 resSul.getSdt(), resSul.getPiv(), //new PIV(location, resSul.getParsInVars()), 
                 g, transition);
-                
+        System.out.println("hasCE: " + hasCE);
         if (!hasCE) {
             return new IndexResult(idx, IndexStatus.NO_CE, null);
         }
@@ -190,6 +190,7 @@ public class CounterexampleAnalysis {
                 IndexStatus.HAS_CE_AND_REFINES : IndexStatus.HAS_CE_NO_REFINE,
                 slice);
         indx.setSuffix(symSuffix);
+        System.out.println("CE Status: " + indx.status.name());
         return indx;
     }
     
@@ -205,9 +206,9 @@ public class CounterexampleAnalysis {
         System.out.println("Sul Branching:");
         System.out.println(Arrays.toString(branchSul.getBranches().values().toArray()));
         
-        for (TransitionGuard guardHyp : branchHyp.getBranches().values()) {
+        for (TransitionGuard guardSul : branchSul.getBranches().values()) {
             boolean refines = false;
-            for (TransitionGuard guardSul : branchSul.getBranches().values()) {
+            for (TransitionGuard guardHyp : branchHyp.getBranches().values()) {
                 if (sdtOracle.doesRefine(guardHyp, c.getPrimeRow().getParsInVars(), 
                         guardSul, pivSUL)) {
                     refines = true;
