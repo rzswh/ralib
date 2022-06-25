@@ -26,7 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 
 import de.learnlib.logging.LearnLogger;
@@ -43,7 +42,6 @@ import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataValue;
 import de.learnlib.ralib.data.Mapping;
 import de.learnlib.ralib.data.PIV;
-import de.learnlib.ralib.data.Replacement;
 import de.learnlib.ralib.data.SymbolicDataValue;
 import de.learnlib.ralib.data.SymbolicDataValue.Parameter;
 import de.learnlib.ralib.data.SymbolicDataValue.Register;
@@ -143,47 +141,18 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
 		if (sat2)
 			return false;
 		
-//		boolean isEquivalent = !sat1 && !sat2;
-
 		return true;
-    }
-    
-    private boolean satisfiable(GuardExpression expr1, PIV piv1, GuardExpression expr2, PIV piv2, GuardExpression exprG) {
-    	 VarMapping<SymbolicDataValue, SymbolicDataValue> gremap = 
-                 new VarMapping<>();
-         for (SymbolicDataValue sv : exprG.getSymbolicDataValues()) {
-             if (sv instanceof Parameter) {
-                 gremap.put(sv, new SuffixValue(sv.getType(), sv.getId()));
-             }
-         }
-         
-         exprG = exprG.relabel(gremap);
-         
-         VarMapping<SymbolicDataValue, SymbolicDataValue> remap = 
-                 createRemapping(piv2, piv1);
-         
-         GuardExpression expr2r = expr2.relabel(remap);
-         
-         GuardExpression left = new Conjunction(
-                 exprG, expr1, new Negation(expr2r));
-         
-         GuardExpression right = new Conjunction(
-                 exprG, expr2r, new Negation(expr1));
-         
-         GuardExpression test = new Disjunction(left, right);
-
-         boolean r = solver.isSatisfiable(test);
-         return r;
+		
     }
 
     @Override
     public boolean doesRefine(TransitionGuard refining, PIV pivRefining, 
             TransitionGuard refined, PIV pivRefined) {
-        boolean doesRefine = this.doesRefine(refining.getCondition(), pivRefining, refined.getCondition(), pivRefined);
+        boolean doesRefine = doesRefine(refining.getCondition(), pivRefining, refined.getCondition(), pivRefined);
         return doesRefine;
     }
     
-    public boolean doesRefine(GuardExpression refining, PIV pivRefining, 
+    private boolean doesRefine(GuardExpression refining, PIV pivRefining, 
             GuardExpression refined, PIV pivRefined) {
         
         log.log(Level.FINEST, "refining: {0}", refining);
@@ -214,7 +183,7 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
     	GuardExpression refiningConjunction = this.augmentGuardWithContext(refining, contextMapping);
     	GuardExpression refinedConjunction = this.augmentGuardWithContext(refined, contextMapping);
     	
-    	return this.doesRefine(refiningConjunction, pivRefining, refinedConjunction, pivRefined);
+    	return doesRefine(refiningConjunction, pivRefining, refinedConjunction, pivRefined);
     }
     
     public boolean canBothBeSatisfied(GuardExpression refining, PIV pivRefining, 
@@ -577,20 +546,6 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
 		return index;
     }
 
-    
-        
-    
-    /* METHODS that could be used (if not, should be removed)
-     */
-
-    private Collection<AtomicGuardExpression> getBranchingAtomsAtPath(List<SDTGuard> path,  SDT sdt) {
-    	Set<SDTGuard> pathBranching = sdt.getBranchingAtPath(path);
-    	List<SDTGuard> guards = new ArrayList<>(pathBranching);
-    	Conjunction falsePath = SDT.toPathExpression(guards);
-    	Collection<AtomicGuardExpression> allAtoms = falsePath.getAtoms();
-    	return allAtoms;
-    }
-    
 
     /**
      * Relabeles  sdts so that registers appearing in equality expressions are replaced by the suffixes to which
@@ -614,29 +569,6 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
     			} 
     		}
     		SDT relabeledSdt = relabelPrefixesWithSuffixes(sdt);
-    		newChildren.put(guard, relabeledSdt);
-    	}
-    	return new SDT(newChildren);
-    }
-    
-    private SDT replaceSuffixesWithPrefixes(SDT sutSdt) {
-    	if (sutSdt instanceof SDTLeaf)
-    		return sutSdt;
-    	Map<SDTGuard, SDT> children = sutSdt.getChildren();
-    	Map<SDTGuard, SDT> newChildren = new LinkedHashMap<SDTGuard, SDT>();
-    	for (Map.Entry<SDTGuard, SDT> entry : children.entrySet()) {
-    		SDTGuard guard = entry.getKey();
-    		SDT sdt = entry.getValue();
-    		if (guard instanceof EqualityGuard) {
-    			EqualityGuard equGuard = (EqualityGuard) guard;
-    			SymbolicDataValue reg = equGuard.getRegister();
-    			if (reg.isRegister() || reg.isConstant()) {
-    				Replacement repl = new Replacement();
-    				repl.put(equGuard.getParameter(), equGuard.getExpression());
-    				sdt = (SDT) sdt.replace(repl);
-    			} 
-    		}
-    		SDT relabeledSdt = replaceSuffixesWithPrefixes(sdt);
     		newChildren.put(guard, relabeledSdt);
     	}
     	return new SDT(newChildren);
