@@ -80,7 +80,6 @@ public class LearnMixedIOTest extends RaLibLearningTestSuite {
         DataWordSUL sul = new SimulatorSUL(model, teachers, consts);
 
         JConstraintsConstraintSolver jsolv = TestUtil.getZ3Solver();  
-        IOOracle ioOracle = new BasicSULOracle(sul, ERROR);
         
         super.setHypValidator((hyp)
         		-> {

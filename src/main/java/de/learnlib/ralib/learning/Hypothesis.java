@@ -16,6 +16,10 @@
  */
 package de.learnlib.ralib.learning;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import de.learnlib.api.AccessSequenceTransformer;
 import de.learnlib.ralib.automata.MutableRegisterAutomaton;
 import de.learnlib.ralib.automata.RALocation;
@@ -23,9 +27,6 @@ import de.learnlib.ralib.automata.Transition;
 import de.learnlib.ralib.automata.TransitionSequenceTransformer;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.words.PSymbolInstance;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import net.automatalib.words.Word;
 
 /**
