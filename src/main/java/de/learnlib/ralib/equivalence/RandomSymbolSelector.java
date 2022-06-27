@@ -98,7 +98,7 @@ public class RandomSymbolSelector extends InputSelector{
 
 	private List<DataValue<?>> getRegisterValuesForType(Word<PSymbolInstance> run, DataType t) {
 		List<DataValue<?>> values = new ArrayList<>();
-		values.addAll(hyp.getRegisterValuation(run).values());
+		values.addAll(hyp.getRegisterValuation(run).values(t));
 		values.addAll(constants.values(t));
 		return values;
 	}
