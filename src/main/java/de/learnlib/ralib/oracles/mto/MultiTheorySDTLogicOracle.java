@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Level;
 
 import de.learnlib.logging.LearnLogger;
@@ -55,6 +56,7 @@ import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.theory.DataRelation;
 import de.learnlib.ralib.theory.SDTGuard;
 import de.learnlib.ralib.theory.equality.EqualityGuard;
+import de.learnlib.ralib.words.DataWords;
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import net.automatalib.words.Word;
@@ -86,7 +88,12 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
         log.log(Level.FINEST, "SDT2: {0}", sdt2);
         log.log(Level.FINEST, "Guard: {0}", guard);
 
-        return !areEquivalent(sdt1, piv1, guard.getCondition(), sdt2, piv2, guard.getCondition(), new Mapping<>(consts));
+        Mapping<SymbolicDataValue, DataValue<?>> contextValuation = new Mapping<>(consts);
+        DataValue<?> [] values = DataWords.valsOf(prefix);
+		piv1.forEach((param, reg)
+				-> contextValuation.put(reg, values[param.getId()-1]));
+
+        return !areEquivalent(sdt1, piv1, guard.getCondition(), sdt2, piv2, guard.getCondition(), contextValuation);
     }
     
     
