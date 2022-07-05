@@ -495,7 +495,7 @@ public abstract class ToolTemplate extends AbstractToolWithRandomWalk {
 				System.out.println("exporting model to model.xml");
 				 try {
 				 FileOutputStream fso = new FileOutputStream("model.xml");
-				 RegisterAutomatonExporter.write(hyp, new Constants(), fso);
+				 RegisterAutomatonExporter.write(hyp, constants, fso);
 				 } catch (FileNotFoundException ex) {
 				 System.out.println("... export failed");
 				 }
