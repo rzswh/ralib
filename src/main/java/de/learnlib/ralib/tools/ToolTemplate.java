@@ -2,6 +2,8 @@ package de.learnlib.ralib.tools;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.ralib.automata.RegisterAutomaton;
 import de.learnlib.ralib.automata.util.RAToDot;
+import de.learnlib.ralib.automata.xml.RegisterAutomatonExporter;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataType;
 import de.learnlib.ralib.data.DataValue;
@@ -490,12 +493,12 @@ public abstract class ToolTemplate extends AbstractToolWithRandomWalk {
 
 			if (this.exportModel) {
 				System.out.println("exporting model to model.xml");
-				// try {
-				// FileOutputStream fso = new FileOutputStream("model.xml");
-				// RegisterAutomatonExporter.write(hyp, new Constants(), fso);
-				// } catch (FileNotFoundException ex) {
-				// System.out.println("... export failed");
-				// }
+				 try {
+				 FileOutputStream fso = new FileOutputStream("model.xml");
+				 RegisterAutomatonExporter.write(hyp, new Constants(), fso);
+				 } catch (FileNotFoundException ex) {
+				 System.out.println("... export failed");
+				 }
 				System.out.println("exporting model to model.dot");
 				RAToDot dotExport = new RAToDot(hyp, true);
 				String dot = dotExport.toString();
@@ -541,11 +544,6 @@ public abstract class ToolTemplate extends AbstractToolWithRandomWalk {
 			this.testInput = new InputCounter();
 			learnerQuery = new QueryCounter();
 			ceQuery = new QueryCounter();
-			Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-				public void run() {
-					Counters.this.print(System.out);
-				}
-			}));
 		}
 
 		public long getTotalNumInputs() {
