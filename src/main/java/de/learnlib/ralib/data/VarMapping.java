@@ -45,6 +45,17 @@ implements Iterable<Map.Entry<K, V>>
     public Iterator<Map.Entry<K, V>> iterator() {
         return this.entrySet().iterator();
     }
+    
+    /**
+     * Returns an inversed mapping.
+     */
+    public VarMapping inverse() {
+    	VarMapping mapping = new VarMapping();
+    	for (Map.Entry entry : this) {
+    		mapping.put(entry.getValue(), entry.getKey());
+    	}
+    	return mapping;
+    }
 
     public String toString(String map) {
         StringBuilder sb = new StringBuilder();

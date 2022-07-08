@@ -23,6 +23,8 @@ import de.learnlib.ralib.automata.Transition;
 import de.learnlib.ralib.automata.TransitionGuard;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.PIV;
+import de.learnlib.ralib.data.SymbolicDataExpression;
+import de.learnlib.ralib.data.SymbolicDataValue;
 import de.learnlib.ralib.data.SymbolicDataValue.Parameter;
 import de.learnlib.ralib.data.SymbolicDataValue.Register;
 import de.learnlib.ralib.data.VarMapping;
@@ -133,6 +135,10 @@ class AutomatonBuilder {
         PIV parsInVars_Src = src_c.getPrimeRow().getParsInVars();
         PIV parsInVars_Row = r.getParsInVars();        
         VarMapping remapping = dest_c.getRemapping(r);
+        VarMapping inverseRemapping = null;
+        if (remapping != null) {
+        	inverseRemapping = remapping.inverse();
+        }
         
 //        log.log(Level.FINEST,"PIV ROW:" + parsInVars_Row);
 //        log.log(Level.FINEST,"PIV SRC:" + parsInVars_Src);
@@ -142,7 +148,8 @@ class AutomatonBuilder {
             // param or register
             Parameter p = e.getKey();
             // remapping is null for prime rows ...
-            Register rNew = (remapping == null) ? e.getValue() : (Register) remapping.get(e.getValue());
+            Register rNew = (remapping == null) ? e.getValue() : (Register) inverseRemapping.get(e.getValue());
+//            keyForValue(remapping, e.getValue());
             if (p.getId() > max) {                
                 Parameter pNew = new Parameter(p.getType(), p.getId() - max);
                 assignments.put(rNew, pNew);
@@ -162,7 +169,7 @@ class AutomatonBuilder {
             this.automaton.setTransitionSequence(t, r.getPrefix());
         }
     }
-
+    
     protected Transition createTransition(ParameterizedSymbol action, TransitionGuard guard, 
             RALocation src_loc, RALocation dest_loc, Assignment assign) {
         return new Transition(action, guard, src_loc, dest_loc, assign);
