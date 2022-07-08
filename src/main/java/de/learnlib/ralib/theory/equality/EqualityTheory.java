@@ -16,10 +16,10 @@
  */
 package de.learnlib.ralib.theory.equality;
 
-import static de.learnlib.ralib.theory.DataRelation.DEQ;
 import static de.learnlib.ralib.theory.DataRelation.ALL;
-import static de.learnlib.ralib.theory.DataRelation.EQ;
 import static de.learnlib.ralib.theory.DataRelation.DEFAULT;
+import static de.learnlib.ralib.theory.DataRelation.DEQ;
+import static de.learnlib.ralib.theory.DataRelation.EQ;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +38,7 @@ import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataType;
 import de.learnlib.ralib.data.DataValue;
 import de.learnlib.ralib.data.FreshValue;
+import de.learnlib.ralib.data.Mapping;
 import de.learnlib.ralib.data.PIV;
 import de.learnlib.ralib.data.ParValuation;
 import de.learnlib.ralib.data.SuffixValuation;
@@ -51,14 +53,16 @@ import de.learnlib.ralib.learning.SymbolicSuffix;
 import de.learnlib.ralib.oracles.io.IOOracle;
 import de.learnlib.ralib.oracles.mto.SDT;
 import de.learnlib.ralib.oracles.mto.SDTConstructor;
+import de.learnlib.ralib.oracles.mto.SemanticEquivalenceChecker;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.theory.DataRelation;
 import de.learnlib.ralib.theory.IfElseGuardMerger;
 import de.learnlib.ralib.theory.SDTAndGuard;
 import de.learnlib.ralib.theory.SDTEquivalenceChecker;
 import de.learnlib.ralib.theory.SDTGuard;
 import de.learnlib.ralib.theory.SDTGuardLogic;
-import de.learnlib.ralib.theory.SyntacticEquivalenceChecker;
 import de.learnlib.ralib.theory.Theory;
+import de.learnlib.ralib.tools.classanalyzer.TypedTheory;
 import de.learnlib.ralib.words.DataWords;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
@@ -78,6 +82,8 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 
 	private IfElseGuardMerger ifElseMerger;
 
+	private ConstraintSolver solver;
+
 	private static final LearnLogger log = LearnLogger.getLogger(EqualityTheory.class);
 
 	@Override
@@ -88,6 +94,7 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 	public EqualityTheory(boolean useNonFreeOptimization) {
 		this.useNonFreeOptimization = useNonFreeOptimization;
 		this.ifElseMerger = new IfElseGuardMerger(getGuardLogic());
+		this.solver = TypedTheory.getSolver("z3");
 	}
 
 	public void setFreshValues(boolean freshValues) {
@@ -104,8 +111,8 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 
 	// given a map from guards to SDTs, merge guards based on whether they can
 	// use another SDT. Base case: always add the 'else' guard first.
-	private Map<SDTGuard, SDT> mergeGuards(Map<SDTGuard, SDT> ifGuards, SDTGuard deqGuard, SDT deqSdt) {
-		SDTEquivalenceChecker sdtChecker = new SyntacticEquivalenceChecker();
+	private Map<SDTGuard, SDT> mergeGuards(Map<SDTGuard, SDT> ifGuards, SDTGuard deqGuard, SDT deqSdt, SDTEquivalenceChecker sdtChecker) {
+//		SDTEquivalenceChecker sdtChecker = new SyntacticEquivalenceChecker();
 		Map<SDTGuard, SDT> retMap = ifElseMerger.merge(ifGuards, deqGuard, deqSdt, sdtChecker);
 		assert !retMap.isEmpty();
 		return retMap;
@@ -148,6 +155,10 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 
 		List<DataValue<T>> potList = new ArrayList<>(potSet);
 		List<DataValue<T>> potential = getPotential(potList);
+		List<DataValue> pValues = Arrays.asList(DataWords.valsOf(prefix));
+		
+		Mapping<SymbolicDataValue, DataValue<?>> mapping = buildContext(pValues, suffixValues, constants, type);
+		SDTEquivalenceChecker sdtChecker = new SemanticEquivalenceChecker(constants, solver, mapping);
 
 		/*
 		 * A suffix parameter is not free if: 1. it is equal to a previous
@@ -181,7 +192,7 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 
 						log.log(Level.FINEST, " single deq SDT : " + sdt.toString());
 
-						Map<SDTGuard, SDT> merged = mergeGuards(tempKids, new SDTAndGuard(currentParam), sdt);
+						Map<SDTGuard, SDT> merged = mergeGuards(tempKids, new SDTAndGuard(currentParam), sdt, sdtChecker);
 
 						log.log(Level.FINEST, "temporary guards = " + tempKids.keySet());
 						log.log(Level.FINEST, "merged guards = " + merged.keySet());
@@ -223,7 +234,7 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 
 				log.log(Level.FINEST, " single deq SDT : " + sdt.toString());
 
-				Map<SDTGuard, SDT> merged = mergeGuards(tempKids, new SDTAndGuard(currentParam), sdt);
+				Map<SDTGuard, SDT> merged = mergeGuards(tempKids, new SDTAndGuard(currentParam), sdt, sdtChecker);
 
 				log.log(Level.FINEST, "temporary guards = " + tempKids.keySet());
 				// log.log(Level.FINEST,"temporary pivs = " + tempPiv.keySet());
@@ -251,7 +262,7 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 			// this is the valuation of the suffixvalues in the suffix
 			SuffixValuation ifSuffixValues = new SuffixValuation(suffixValues);
 			ifSuffixValues.put(sv, newDv);
-
+			
 			EqualityGuard eqGuard = pickupDataValue(newDv, prefixValues, currentParam, values, constants);
 			log.log(Level.FINEST, "eqGuard is: " + eqGuard.toString());
 			diseqList.add(new DisequalityGuard(currentParam, eqGuard.getRegister()));
@@ -273,14 +284,14 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 		// this is the valuation of the suffixvalues in the suffix
 		SuffixValuation elseSuffixValues = new SuffixValuation(suffixValues);
 		elseSuffixValues.put(sv, fresh);
-
+		
 		SDT elseOracleSdt = oracle.treeQuery(prefix, suffix, elseValues, pir, constants, elseSuffixValues);
 
 		SDTAndGuard deqGuard = new SDTAndGuard(currentParam, (diseqList.toArray(new DisequalityGuard[] {})));
 		log.log(Level.FINEST, "diseq guard = " + deqGuard.toString());
 
 		// merge the guards
-		Map<SDTGuard, SDT> merged = mergeGuards(tempKids, deqGuard, elseOracleSdt);
+		Map<SDTGuard, SDT> merged = mergeGuards(tempKids, deqGuard, elseOracleSdt, sdtChecker);
 
 		// only keep registers that are referenced by the merged guards
 		pir.putAll(keepMem(merged));
@@ -399,6 +410,46 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 				return i;
 		}
 		return pId;
+	}
+	
+	private Mapping<SymbolicDataValue, DataValue<?>> buildContext(List<DataValue> prefixValues, SuffixValuation ifValues,
+			Constants constants, DataType type) {
+		Mapping<SymbolicDataValue, DataValue<?>> context = new Mapping<SymbolicDataValue, DataValue<?>>();
+		LinkedHashSet<DataValue> prSet = new LinkedHashSet<DataValue>(prefixValues);
+		for (DataValue dv : prSet) {
+			Register reg = this.getRegisterWithValue(dv, prefixValues);
+			context.put(reg, dv);
+		}
+
+		for (DataValue dv : ifValues.values()) {
+			SuffixValue suff = this.getSuffixWithValue(dv, ifValues);
+			context.put(suff, dv);
+		}
+
+		context.putAll(constants.ofType(type));
+		return context;
+	}
+	
+
+	private SuffixValue getSuffixWithValue(DataValue<T> dv, SuffixValuation ifValues) {
+		if (ifValues.containsValue(dv)) {
+			for (Map.Entry<SuffixValue, DataValue<?>> entry : ifValues.entrySet()) {
+				if (entry.getValue().equals(dv)) {
+					return entry.getKey();
+				}
+			}
+		}
+		return null;
+	}
+
+	private Register getRegisterWithValue(DataValue<T> dv, List<DataValue> prefixValues) {
+		if (prefixValues.contains(dv)) {
+			int newDv_i = prefixValues.indexOf(dv) + 1;
+			Register newDv_r = new Register(dv.getType(), newDv_i);
+			return newDv_r;
+		}
+
+		return null;
 	}
 
 	public SDTGuardLogic getGuardLogic() {
