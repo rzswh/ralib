@@ -23,6 +23,7 @@ import de.learnlib.ralib.data.VarMapping;
 import de.learnlib.ralib.exceptions.DecoratedRuntimeException;
 import de.learnlib.ralib.oracles.TreeOracle;
 import de.learnlib.ralib.oracles.TreeQueryResult;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.words.PSymbolInstance;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -63,22 +64,24 @@ final class Cell {
     }
 
     /**
-     * checks whether the sdts of the two cells are equal
+     * checks whether the SDTs of the two cells are equal under a renaming from the 
+     * SDT in {@code other} to to the SDT in this {@code this} 
      *
      * @param other
+     * @param solver TODO
      * @return
      */
-    boolean isEquivalentTo(Cell other, VarMapping renaming) {
+    boolean isEquivalentTo(Cell other, VarMapping renaming, ConstraintSolver solver) {
         if (!couldBeEquivalentTo(other)) {
             return false;
         }
-
+        
         boolean check = this.suffix.equals(other.suffix)
-                && this.parsInVars.relabel(renaming).equals(other.parsInVars)
-                && this.sdt.isEquivalent(other.sdt, renaming);
+//                && this.parsInVars.relabel(renaming).equals(other.parsInVars)
+                && this.sdt.isEquivalent(other.sdt, renaming, solver);
         log.log(Level.FINEST, this.sdt + "\nVS\n" + other.sdt + "\n");
         log.log(Level.FINEST, this.suffix + "    " + other.suffix);
-        log.log(Level.FINEST, this.suffix.equals(other.suffix) + " " + this.parsInVars.relabel(renaming).equals(other.parsInVars) + " " + this.sdt.isEquivalent(other.sdt, renaming));
+        log.log(Level.FINEST, this.suffix.equals(other.suffix) + " " + this.parsInVars.relabel(renaming).equals(other.parsInVars) + " " + this.sdt.isEquivalent(other.sdt, renaming, solver));
 
        // System.out.println("EQ: " + this.prefix + " . " + other.prefix+ " : " + check);
         return check;

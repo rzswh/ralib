@@ -44,6 +44,7 @@ import de.learnlib.ralib.data.SymbolicDataValue.Register;
 import de.learnlib.ralib.data.VarMapping;
 import de.learnlib.ralib.exceptions.DecoratedRuntimeException;
 import de.learnlib.ralib.learning.SymbolicDecisionTree;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.theory.SDTGuard;
 import de.learnlib.ralib.theory.SDTIfGuard;
 import de.learnlib.ralib.theory.SDTMultiGuard;
@@ -185,17 +186,53 @@ public class SDT implements SymbolicDecisionTree {
         return this.children;
     }
 
+    /**
+     * checks if {@code this} SDT is equivalent with the {@code other} SDT under the provided renaming 
+     * from {@code other} to {@code this}.
+     */
     @Override
     public boolean isEquivalent(
-            SymbolicDecisionTree other, VarMapping renaming) {
+            SymbolicDecisionTree other, VarMapping renaming, ConstraintSolver solver) {
         if (other instanceof SDTLeaf) {
             return false;
         }
         SDT otherSDT = (SDT) other;
         SDT otherRelabeled = (SDT) otherSDT.relabel(renaming);
-        boolean regEq = this.regCanUse(otherSDT) && otherSDT.regCanUse(this);
-        return regEq && this.canUse(otherRelabeled)
-                && otherRelabeled.canUse(this);
+        boolean syntacticEquivalent = this.canUse(otherRelabeled)
+        && otherRelabeled.canUse(this);
+        
+        if (syntacticEquivalent) {
+        	return true;
+        }
+        
+        if (this instanceof SDTLeaf && other instanceof SDTLeaf ) {
+        	return this.isAccepting() == other.isAccepting();
+        }
+        
+        GuardExpression acc1 = getAcceptingPaths();
+		GuardExpression acc2r = otherRelabeled.getAcceptingPaths();
+		
+		GuardExpression neg1 = getRejectingPaths();
+		GuardExpression neg2r = otherRelabeled.getRejectingPaths();
+		
+		GuardExpression eqTestGuard = new Conjunction(
+				new Disjunction(
+						new Conjunction(neg1, acc2r),
+						new Conjunction(neg2r, acc1)
+						)
+				);
+		
+		boolean sat1 = solver.isSatisfiable(eqTestGuard);
+		
+		if (sat1) 
+			return false;
+		
+		return true;
+        
+//        boolean regEq = true; 
+//        		this.regCanUse(otherSDT) && otherSDT.regCanUse(this);
+//        return regEq && this.canUse(otherRelabeled)
+//                && otherRelabeled.canUse(this);
     }
     
     public boolean isEquivalentUnderEquality(
@@ -210,6 +247,8 @@ public class SDT implements SymbolicDecisionTree {
         
         SDT thisSdt = this.relabelUnderEq(ds);
         SDT relabeledDeqSDT = ((SDT) deqSDT).relabelUnderEq(ds); 
+        
+        
          
         boolean x = thisSdt.canUse(relabeledDeqSDT);
 //        System.out.println(this + " == under equality( " + ds + " ): \n " + to + " vs " + deqSDT + " result: " + x);

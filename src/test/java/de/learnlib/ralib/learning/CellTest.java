@@ -87,7 +87,7 @@ public class CellTest extends RaLibTestSuite {
         logger.log(Level.FINE, "Cell: {0}", c.toString());
         
         Assert.assertTrue(c.couldBeEquivalentTo(c));
-        Assert.assertTrue(c.isEquivalentTo(c, new VarMapping()));
+        Assert.assertTrue(c.isEquivalentTo(c, new VarMapping(), null));
         
     }
     

@@ -18,6 +18,7 @@ package de.learnlib.ralib.oracles.mto;
 
 import de.learnlib.ralib.data.SymbolicDataValue;
 import de.learnlib.ralib.learning.SymbolicDecisionTree;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.data.VarMapping;
 import de.learnlib.ralib.theory.SDTGuard;
 import de.learnlib.ralib.theory.equality.EqualityGuard;
@@ -46,7 +47,7 @@ public class SDTLeaf extends SDT {
             
     @Override
     public boolean isEquivalent(
-            SymbolicDecisionTree other, VarMapping renaming) {
+            SymbolicDecisionTree other, VarMapping renaming, ConstraintSolver constraintSolver) {
         return (getClass() == other.getClass() &&
                 isAccepting() == other.isAccepting());
     }
@@ -57,7 +58,7 @@ public class SDTLeaf extends SDT {
             return false;
         }
         else {
-            return this.isEquivalent(other, new VarMapping());
+            return isAccepting() == other.isAccepting();
         }
     }
     

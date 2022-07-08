@@ -104,7 +104,7 @@ class Component {
                 r.getParsInVars(), primeRow.getParsInVars());
 
         for (VarMapping m : iterator) {
-            if (r.isEquivalentTo(primeRow, m)) {
+            if (r.isEquivalentTo(primeRow, m, solver)) {
                 this.otherRows.put(r, m);
                 return true; 
             }
@@ -141,9 +141,10 @@ class Component {
         }
         
         try {
-        primeRow.addSuffix(suffix, oracle);
+        	primeRow.addSuffix(suffix, oracle);
         } catch(DecoratedRuntimeException exc) { 
-        	throw exc.addDecoration("branching", this.branching);
+        	throw exc.addDecoration("branching", this.branching)
+        	.addDecoration("observation table", obs);
         }
         Map<Row, VarMapping> otherOld = new LinkedHashMap<>(otherRows);
         otherRows.clear();
@@ -300,6 +301,10 @@ class Component {
         return branching.get(act);
     }
     
+    /**
+     * Returns a remapping from the prime row of this component to row {@code r}.
+     * Assumes {@code r} is in the other rows of the component.
+     */
     VarMapping getRemapping(Row r) {
         return this.otherRows.get(r);
     }

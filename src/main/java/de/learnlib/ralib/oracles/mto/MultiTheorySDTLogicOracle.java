@@ -26,7 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.logging.Level;
 
 import de.learnlib.logging.LearnLogger;
@@ -101,25 +100,25 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
     		Mapping<SymbolicDataValue, DataValue<?>> contextMapping) {
         SDT _sdt1 = (SDT) sdt1;
         SDT _sdt2 = (SDT) sdt2;
-		GuardExpression acc1 = _sdt1.getAcceptingPaths();
-		GuardExpression acc2 = _sdt2.getAcceptingPaths();
-		if (acc1 instanceof FalseGuardExpression)
-			return acc2 instanceof FalseGuardExpression;
-		else if (acc2 instanceof FalseGuardExpression)
-			return acc1 instanceof FalseGuardExpression;
-		
-		GuardExpression neg1 = _sdt1.getRejectingPaths();
-		GuardExpression neg2 = _sdt2.getRejectingPaths();
-		
-		GuardExpression[] contextConjuncts = this.buildContextExpressions(contextMapping);
-		GuardExpression common = new Conjunction(contextConjuncts);
-		
+
 		VarMapping<SymbolicDataValue, SymbolicDataValue> remap = 
 	                createRemapping(piv1, piv2);
 		
-		GuardExpression acc2r = acc2.relabel(remap);
+		SDT _sdt2r = (SDT) _sdt2.relabel(remap);
+		
+		GuardExpression acc1 = _sdt1.getAcceptingPaths();
+		GuardExpression acc2r = _sdt2r.getAcceptingPaths();
+		if (acc1 instanceof FalseGuardExpression)
+			return acc2r instanceof FalseGuardExpression;
+		else if (acc2r instanceof FalseGuardExpression)
+			return acc1 instanceof FalseGuardExpression;
+		
+		GuardExpression neg1 = _sdt1.getRejectingPaths();
+		GuardExpression neg2r = _sdt2r.getRejectingPaths();
+		
+		GuardExpression[] contextConjuncts = this.buildContextExpressions(contextMapping);
+		GuardExpression common = new Conjunction(contextConjuncts);
 		GuardExpression guard2r = guard2.relabel(remap);
-		GuardExpression neg2r = neg2.relabel(remap);
 		
 		GuardExpression eqTestGuard1 = new Conjunction(
 				common,

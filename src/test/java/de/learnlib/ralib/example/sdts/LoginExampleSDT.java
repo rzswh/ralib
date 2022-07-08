@@ -23,6 +23,7 @@ import de.learnlib.ralib.data.SymbolicDataValue.Register;
 import de.learnlib.ralib.data.VarMapping;
 import de.learnlib.ralib.learning.GeneralizedSymbolicSuffix;
 import de.learnlib.ralib.learning.SymbolicDecisionTree;
+import de.learnlib.ralib.solver.ConstraintSolver;
 
 /**
  *
@@ -45,7 +46,7 @@ public class LoginExampleSDT implements SymbolicDecisionTree {
     }
 
     @Override
-    public boolean isEquivalent(SymbolicDecisionTree other, VarMapping renaming) {
+    public boolean isEquivalent(SymbolicDecisionTree other, VarMapping renaming, ConstraintSolver constraintSolver) {
         if (!(other.getClass().equals(this.getClass()))) {
             return false;
         }

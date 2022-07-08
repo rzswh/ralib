@@ -19,6 +19,7 @@ package de.learnlib.ralib.learning;
 
 import de.learnlib.ralib.data.Replacement;
 import de.learnlib.ralib.data.VarMapping;
+import de.learnlib.ralib.solver.ConstraintSolver;
 
 /**
  * This interface describes the methods that are needed in a symbolic decision
@@ -29,13 +30,14 @@ import de.learnlib.ralib.data.VarMapping;
 public interface SymbolicDecisionTree {
     
     /**
-     * checks if the the tree (under renaming) is equivalent to other tree 
+     * checks if the tree is equivalent to {@code other} tree under a renaming from {@code other} to {@code this}  
      * 
      * @param other
      * @param renaming
+     * @param solver constraint solver to use to check for equivalence
      * @return 
      */
-    public boolean isEquivalent(SymbolicDecisionTree other, VarMapping renaming);
+    public boolean isEquivalent(SymbolicDecisionTree other, VarMapping renaming, ConstraintSolver solver);
     
     /**
      * apply relabeling to tree and return a renamed tree.

@@ -17,6 +17,7 @@
 package de.learnlib.ralib.learning;
 
 import de.learnlib.ralib.RaLibTestSuite;
+import de.learnlib.ralib.TestUtil;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataType;
 import static de.learnlib.ralib.example.login.LoginAutomatonExample.I_LOGIN;
@@ -35,6 +36,7 @@ import de.learnlib.ralib.data.util.PIVRemappingIterator;
 import static de.learnlib.ralib.example.login.LoginAutomatonExample.T_PWD;
 import static de.learnlib.ralib.example.login.LoginAutomatonExample.T_UID;
 import de.learnlib.ralib.example.sdts.LoginExampleTreeOracle;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.theory.Theory;
 import de.learnlib.ralib.tools.theories.IntegerEqualityTheory;
 import de.learnlib.ralib.words.PSymbolInstance;
@@ -88,6 +90,8 @@ public class RowTest extends RaLibTestSuite {
                 new GeneralizedSymbolicSuffix[] {symSuffix1, symSuffix2};
         logger.log(Level.FINE, "Suffixes: {0}", Arrays.toString(suffixes));
         
+        ConstraintSolver solver = TestUtil.getZ3Solver();
+        
         LoggingOracle oracle = new LoggingOracle(new LoginExampleTreeOracle());
         
         Row r1 = Row.computeRow(oracle, prefix1, Arrays.asList(suffixes), false);
@@ -95,7 +99,7 @@ public class RowTest extends RaLibTestSuite {
         
         VarMapping renaming = null;
         for (VarMapping map : new PIVRemappingIterator(r1.getParsInVars(), r2.getParsInVars())) {
-            if (r1.isEquivalentTo(r2, map)) {
+            if (r1.isEquivalentTo(r2, map, solver)) {
                 renaming = map;
                 break;
             }
@@ -103,7 +107,7 @@ public class RowTest extends RaLibTestSuite {
 
         Assert.assertNotNull(renaming);
         Assert.assertTrue(r1.couldBeEquivalentTo(r2));
-        Assert.assertTrue(r1.isEquivalentTo(r2, renaming));
+        Assert.assertTrue(r1.isEquivalentTo(r2, renaming, solver));
         
     }
     

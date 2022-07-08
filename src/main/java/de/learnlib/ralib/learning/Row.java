@@ -24,6 +24,7 @@ import de.learnlib.ralib.data.VarMapping;
 import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.RegisterGenerator;
 import de.learnlib.ralib.exceptions.DecoratedRuntimeException;
 import de.learnlib.ralib.oracles.TreeOracle;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
@@ -145,13 +146,14 @@ class Row {
     }
 
     /**
-     * checks rows for equality (disregarding of the prefix!). It is assumed
-     * that both rows have the same set of suffixes.
+     * checks rows for equality (disregarding of the prefix!) under a renaming of the SDTs from 
+     * the {@code other} row to the SDTs from {@code this} row. 
+     * It is assumed that both rows have the same set of suffixes.
      *
      * @param other
      * @return true if rows are equal
      */
-    boolean isEquivalentTo(Row other, VarMapping renaming) {
+    boolean isEquivalentTo(Row other, VarMapping renaming, ConstraintSolver solver) {
         if (!couldBeEquivalentTo(other)) {
             return false;
         }
@@ -174,7 +176,7 @@ class Row {
                 }
             }
 
-            if (!c1.isEquivalentTo(c2, renaming)) {
+            if (!c1.isEquivalentTo(c2, renaming, solver)) {
                 return false;
             }
         }

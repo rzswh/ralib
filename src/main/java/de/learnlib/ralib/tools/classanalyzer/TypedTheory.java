@@ -32,6 +32,12 @@ public interface TypedTheory<T> extends Theory<T> {
     
     public Class<T> getDomainType();
     
+	public static de.learnlib.ralib.solver.ConstraintSolver getSolver(String name) {
+		de.learnlib.ralib.solver.ConstraintSolver raLibSolver = de.learnlib.ralib.solver.ConstraintSolverFactory
+				.createSolver(name);
+		return raLibSolver;
+	}
+    
     public default void setUseSuffixOpt(boolean useit) {
         System.err.println("Suffix Optimization currently not implemented for theory " + 
                 this.getClass().getName());
