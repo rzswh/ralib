@@ -470,7 +470,7 @@ public abstract class ToolTemplate extends AbstractToolWithRandomWalk {
 		System.out.println("=============================== STOP ===============================");
 		System.out.println(SimpleProfiler.getResults());
 
-		System.out.println("ce lengths (oirginal): " + Arrays.toString(ceLengths.toArray()));
+		System.out.println("ce lengths (original): " + Arrays.toString(ceLengths.toArray()));
 
 		if (useCeOptimizers) {
 			System.out.println("ce lengths (shortend): " + Arrays.toString(ceLengthsShortened.toArray()));
