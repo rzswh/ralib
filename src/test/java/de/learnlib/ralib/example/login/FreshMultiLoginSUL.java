@@ -37,7 +37,7 @@ public class FreshMultiLoginSUL extends DataWordSUL  {
 		return new ParameterizedSymbol[] { OREGISTER, OK, NOK};
 	}
 
-	private FreshMultiLogin tcpSut;
+	private FreshMultiLogin sut;
 	private Supplier<FreshMultiLogin> supplier;
 
 	public FreshMultiLoginSUL() {
@@ -56,12 +56,12 @@ public class FreshMultiLoginSUL extends DataWordSUL  {
 	@Override
 	public void pre() {
 		countResets(1);
-		this.tcpSut = supplier.get();
+		this.sut = supplier.get();
 	}
 
 	@Override
 	public void post() {
-		this.tcpSut = null;
+		this.sut = null;
 	}
 
 
@@ -89,14 +89,14 @@ public class FreshMultiLoginSUL extends DataWordSUL  {
 	public PSymbolInstance step(PSymbolInstance i) throws SULException {
 		countInputs(1);
 		if (i.getBaseSymbol().equals(ILOGIN)) {
-			Object x = tcpSut.ILogin((Integer) i.getParameterValues()[0].getId(),
+			Object x = sut.ILogin((Integer) i.getParameterValues()[0].getId(),
 					(Integer) i.getParameterValues()[1].getId());
 			return createOutputSymbol(x);
 		} else if (i.getBaseSymbol().equals(ILOGOUT)) {
-			Object x = tcpSut.ILogout((Integer) i.getParameterValues()[0].getId());
+			Object x = sut.ILogout((Integer) i.getParameterValues()[0].getId());
 			return createOutputSymbol(x);
 		} else if (i.getBaseSymbol().equals(IREGISTER)) {
-			Object x = tcpSut.IRegister((Integer) i.getParameterValues()[0].getId());
+			Object x = sut.IRegister((Integer) i.getParameterValues()[0].getId());
 			return createOutputSymbol(x);
 		} 
 

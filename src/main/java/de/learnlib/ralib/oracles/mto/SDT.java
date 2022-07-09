@@ -68,19 +68,6 @@ public class SDT implements SymbolicDecisionTree {
         	.addDecoration("child map", children);
     }
 
-//    public Set<SDTGuard> getGuards() {
-//        if (this instanceof SDTLeaf) {
-//            return new LinkedHashSet<>();
-//        }
-//        Set<SDTGuard> guards = new LinkedHashSet<>();
-//        for (Map.Entry<SDTGuard, SDT> e : this.children.entrySet()) {
-//            guards.add(e.getKey());
-//            if (!(e.getValue() instanceof SDTLeaf)) {
-//                guards.addAll(e.getValue().getGuards());
-//            }
-//        }
-//        return guards;
-//    }
     /**
      * Returns the registers of this SDT.
      *
@@ -179,7 +166,6 @@ public class SDT implements SymbolicDecisionTree {
         }
 
         return true;
-        //return false;
     }
 
     protected Map<SDTGuard, SDT> getChildren() {
@@ -228,14 +214,9 @@ public class SDT implements SymbolicDecisionTree {
 			return false;
 		
 		return true;
-        
-//        boolean regEq = true; 
-//        		this.regCanUse(otherSDT) && otherSDT.regCanUse(this);
-//        return regEq && this.canUse(otherRelabeled)
-//                && otherRelabeled.canUse(this);
     }
     
-    public boolean isEquivalentUnderEquality(
+    public boolean isSyntacticallyEquivalentUnderEquality(
             SymbolicDecisionTree deqSDT, List<EqualityGuard> ds) {
         if (deqSDT instanceof SDTLeaf) {
             if (this instanceof SDTLeaf) {
@@ -250,9 +231,10 @@ public class SDT implements SymbolicDecisionTree {
         
         
          
-        boolean x = thisSdt.canUse(relabeledDeqSDT);
+        boolean equivalent = thisSdt.canUse(relabeledDeqSDT) && relabeledDeqSDT.canUse(thisSdt);
 //        System.out.println(this + " == under equality( " + ds + " ): \n " + to + " vs " + deqSDT + " result: " + x);
-        return x;
+        return equivalent;
+        
     }
     
     public SDT relabelUnderEq(List<EqualityGuard> ds) {
@@ -433,7 +415,7 @@ public class SDT implements SymbolicDecisionTree {
         return isArrayTrue(pairedArray);
 
     }
-
+    
     public boolean canUse(SDT other) {
         SDT thisSdt = this;
         if (other instanceof SDTLeaf) { // trees with incompatible sizes can't use each other

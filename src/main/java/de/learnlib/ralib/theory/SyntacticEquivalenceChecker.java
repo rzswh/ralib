@@ -21,7 +21,7 @@ public class SyntacticEquivalenceChecker implements SDTEquivalenceChecker {
 		if (otherGuard instanceof EqualityGuard)
 			eqGuards.add((EqualityGuard)otherGuard);
 				
-		boolean equiv = guardSdt.isEquivalentUnderEquality(otherGuardSdt, eqGuards);
+		boolean equiv = guardSdt.isSyntacticallyEquivalentUnderEquality(otherGuardSdt, eqGuards);
 		return equiv;
 	}
 

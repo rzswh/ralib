@@ -62,7 +62,6 @@ import de.learnlib.ralib.theory.SDTEquivalenceChecker;
 import de.learnlib.ralib.theory.SDTGuard;
 import de.learnlib.ralib.theory.SDTGuardLogic;
 import de.learnlib.ralib.theory.Theory;
-import de.learnlib.ralib.tools.classanalyzer.TypedTheory;
 import de.learnlib.ralib.words.DataWords;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
@@ -82,8 +81,6 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 
 	private IfElseGuardMerger ifElseMerger;
 
-	private ConstraintSolver solver;
-
 	private static final LearnLogger log = LearnLogger.getLogger(EqualityTheory.class);
 
 	@Override
@@ -94,7 +91,6 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 	public EqualityTheory(boolean useNonFreeOptimization) {
 		this.useNonFreeOptimization = useNonFreeOptimization;
 		this.ifElseMerger = new IfElseGuardMerger(getGuardLogic());
-		this.solver = TypedTheory.getSolver("z3");
 	}
 
 	public void setFreshValues(boolean freshValues) {
@@ -139,7 +135,7 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 	// process a tree query
 	@Override
 	public SDT treeQuery(Word<PSymbolInstance> prefix, GeneralizedSymbolicSuffix suffix, WordValuation values, PIV pir,
-			Constants constants, SuffixValuation suffixValues, SDTConstructor oracle, IOOracle traceOracle) {
+			Constants constants, SuffixValuation suffixValues, SDTConstructor oracle, ConstraintSolver solver, IOOracle traceOracle) {
 
 		int pId = values.size() + 1;
 
@@ -342,7 +338,7 @@ public abstract class EqualityTheory<T> implements Theory<T> {
 	@Override
 	// instantiate a parameter with a data value
 	public DataValue instantiate(Word<PSymbolInstance> prefix, ParameterizedSymbol ps, PIV piv, ParValuation pval,
-			Constants constants, SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs, boolean useSolver) {
+			Constants constants, SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs) {
 
 		List<DataValue> prefixValues = Arrays.asList(DataWords.valsOf(prefix));
 		log.log(Level.FINEST, "prefix values : " + prefixValues.toString());

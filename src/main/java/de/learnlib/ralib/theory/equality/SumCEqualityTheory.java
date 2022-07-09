@@ -44,6 +44,7 @@ import de.learnlib.ralib.mapper.Determinizer;
 import de.learnlib.ralib.oracles.io.IOOracle;
 import de.learnlib.ralib.oracles.mto.SDT;
 import de.learnlib.ralib.oracles.mto.SDTConstructor;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.theory.DataRelation;
 import de.learnlib.ralib.theory.IfElseGuardMerger;
 import de.learnlib.ralib.theory.SDTAndGuard;
@@ -128,7 +129,7 @@ abstract public class SumCEqualityTheory<T extends Number & Comparable<T>> imple
 	// process a tree query
 	@Override
 	public SDT treeQuery(Word<PSymbolInstance> prefix, GeneralizedSymbolicSuffix suffix, WordValuation values, PIV pir,
-			Constants constants, SuffixValuation suffixValues, SDTConstructor oracle, IOOracle traceOracle) {
+			Constants constants, SuffixValuation suffixValues, SDTConstructor oracle, ConstraintSolver solver, IOOracle traceOracle) {
 
 		int pId = values.size() + 1;
 
@@ -318,7 +319,7 @@ abstract public class SumCEqualityTheory<T extends Number & Comparable<T>> imple
 
 	@Override
 	public DataValue instantiate(Word<PSymbolInstance> prefix, ParameterizedSymbol ps, PIV piv, ParValuation pval,
-			Constants constants, SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs, boolean useSolver) {
+			Constants constants, SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs) {
 
 		List<DataValue> prefixValues = Arrays.asList(DataWords.valsOf(prefix));
 		log.log(Level.FINEST, "prefix values : " + prefixValues.toString());

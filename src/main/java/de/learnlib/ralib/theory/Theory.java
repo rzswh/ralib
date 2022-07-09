@@ -24,6 +24,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataValue;
 import de.learnlib.ralib.data.FreshValue;
@@ -37,11 +39,11 @@ import de.learnlib.ralib.mapper.Determinizer;
 import de.learnlib.ralib.oracles.io.IOOracle;
 import de.learnlib.ralib.oracles.mto.SDT;
 import de.learnlib.ralib.oracles.mto.SDTConstructor;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.theory.inequality.IntervalDataValue;
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import net.automatalib.words.Word;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 /**
@@ -75,7 +77,7 @@ public interface Theory<T> {
      * @param suffixValues map of already instantiated suffix 
      * data values (sv -> dv)
      * @param oracle the tree oracle in control of this query
-     * 
+     * @param solver TODO
      * @return a symbolic decision tree and updated piv 
      */    
     public SDT treeQuery(
@@ -86,6 +88,7 @@ public interface Theory<T> {
             Constants constants,
             SuffixValuation suffixValues,
             SDTConstructor oracle,
+            ConstraintSolver solver,
             IOOracle traceOracle);
  
     /**
@@ -113,16 +116,17 @@ public interface Theory<T> {
      * @throws exception if fresh values are not supported
      */
     public default Determinizer<T> getDeterminizer() {
-    	throw new NotImplementedException();
+    	throw new NotImplementedException("Determinizer not implemented for theory");
     }
     
     
     /**
-     * Insantiates the guard by providing a DataValue satisfying the guard, or null, if no such value exists.
+     * Instantiates the guard by providing a DataValue satisfying the guard, or null, if no such value exists.
      * <p>
      * For theories with fresh value support the DataValue subtype should reflect the guard constraints it satisfies.
      * For example, {@link IntervalDataValue} reflects inequality, {@link FreshValue} reflects new value.
 	 * This information is required by the determinizer and symbolic trace canonizer. 
+	 * 
      * 
      * @param prefix
      * @param ps
@@ -137,7 +141,7 @@ public interface Theory<T> {
     public @Nullable DataValue instantiate(Word<PSymbolInstance> prefix, 
             ParameterizedSymbol ps, PIV piv, ParValuation pval,
             Constants constants,
-            SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs, boolean useSolver);
+            SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs);
     
     /**
      * return set of relations that hold between left and right

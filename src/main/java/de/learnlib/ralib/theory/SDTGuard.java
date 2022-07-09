@@ -16,16 +16,14 @@
  */
 package de.learnlib.ralib.theory;
 
+import java.util.Set;
+
 import de.learnlib.ralib.automata.TransitionGuard;
 import de.learnlib.ralib.automata.guards.GuardExpression;
 import de.learnlib.ralib.data.Replacement;
-import de.learnlib.ralib.data.SymbolicDataExpression;
 import de.learnlib.ralib.data.SymbolicDataValue;
 import de.learnlib.ralib.data.SymbolicDataValue.SuffixValue;
 import de.learnlib.ralib.data.VarMapping;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  *

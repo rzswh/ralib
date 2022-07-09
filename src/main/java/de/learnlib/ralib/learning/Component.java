@@ -16,6 +16,15 @@
  */
 package de.learnlib.ralib.learning;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+
 import de.learnlib.logging.LearnLogger;
 import de.learnlib.ralib.automata.TransitionGuard;
 import de.learnlib.ralib.data.Constants;
@@ -27,24 +36,12 @@ import de.learnlib.ralib.data.util.PIVRemappingIterator;
 import de.learnlib.ralib.exceptions.DecoratedRuntimeException;
 import de.learnlib.ralib.oracles.Branching;
 import de.learnlib.ralib.oracles.TreeOracle;
-import de.learnlib.ralib.oracles.mto.Slice;
-import de.learnlib.ralib.oracles.mto.SliceBuilder;
-import de.learnlib.ralib.oracles.mto.SymbolicSuffixBuilder;
 import de.learnlib.ralib.solver.ConstraintSolver;
-import de.learnlib.ralib.theory.DataRelation;
 import de.learnlib.ralib.theory.Theory;
 import de.learnlib.ralib.words.DataWords;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.logging.Level;
 import net.automatalib.words.Word;
 
 /**
@@ -308,7 +305,7 @@ class Component {
     VarMapping getRemapping(Row r) {
         return this.otherRows.get(r);
     }
-    
+
     Row getPrimeRow() {
         return this.primeRow;
     }

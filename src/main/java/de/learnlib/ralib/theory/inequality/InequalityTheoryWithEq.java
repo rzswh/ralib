@@ -61,6 +61,7 @@ import de.learnlib.ralib.oracles.mto.SDTConstructor;
 import de.learnlib.ralib.oracles.mto.SDTLeaf;
 import de.learnlib.ralib.oracles.mto.SDTQuery;
 import de.learnlib.ralib.oracles.mto.SemanticEquivalenceChecker;
+import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.solver.jconstraints.JConstraintsGuardInstantiator;
 import de.learnlib.ralib.theory.DataRelation;
 import de.learnlib.ralib.theory.IfElseGuardMerger;
@@ -108,22 +109,15 @@ public abstract class InequalityTheoryWithEq<T extends Comparable<T>> implements
 	private final InequalityGuardMerger fullMerger;
 	private final IfElseGuardMerger ifElseMerger;
 	private boolean suffixOptimization;
-	private de.learnlib.ralib.solver.ConstraintSolver solver;
 	private final String jSolverName; 
 	private JConstraintsGuardInstantiator<T> guardInstantiator;
 
-	public InequalityTheoryWithEq(InequalityGuardMerger fullMerger,
-			String jSolverName) {
+	public InequalityTheoryWithEq(InequalityGuardMerger fullMerger) {
 		this.freshValues = false;
 		this.suffixOptimization = false;
 		this.fullMerger = fullMerger;
-		this.jSolverName = jSolverName;
+		this.jSolverName = "z3";
 		this.ifElseMerger = new IfElseGuardMerger(getGuardLogic());
-		this.solver = TypedTheory.getSolver(jSolverName);
-	}
-
-	public InequalityTheoryWithEq(InequalityGuardMerger fullMerger) {
-		this(fullMerger, "z3");
 	}
 
 	@Override
@@ -229,7 +223,7 @@ public abstract class InequalityTheoryWithEq<T extends Comparable<T>> implements
 	}
 
 	public SDT treeQuery(Word<PSymbolInstance> prefix, GeneralizedSymbolicSuffix suffix, WordValuation values, PIV piv,
-			Constants constants, SuffixValuation suffixValues, SDTConstructor oracle, IOOracle traceOracle) {
+			Constants constants, SuffixValuation suffixValues, SDTConstructor oracle, ConstraintSolver solver, IOOracle traceOracle) {
 
 		int pId = values.size() + 1;
 		SuffixValue sv = suffix.getDataValue(pId);
@@ -707,7 +701,7 @@ public abstract class InequalityTheoryWithEq<T extends Comparable<T>> implements
 
 	@Override
 	public DataValue<T> instantiate(Word<PSymbolInstance> prefix, ParameterizedSymbol ps, PIV piv, ParValuation pval,
-			Constants constants, SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs, boolean useSolver) {
+			Constants constants, SDTGuard guard, Parameter param, Set<DataValue<T>> oldDvs) {
 		DataType type = param.getType();
 		DataValue<T> returnValue = null;
 		List<DataValue> prefixValues = Arrays.asList(DataWords.valsOf(prefix));

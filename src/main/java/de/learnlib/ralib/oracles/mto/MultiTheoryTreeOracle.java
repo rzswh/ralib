@@ -170,7 +170,7 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
         // make a new tree query for prefix, suffix, prefix valuation, ...
         // to the correct teacher (given by type of first DV in suffix)
         SDT sdt = teach.treeQuery(prefix, suffix, values, pir,
-                constants, suffixValues, this, this.traceOracle);
+                constants, suffixValues, this, solver, this.traceOracle);
         return sdt;
     }
 
@@ -247,7 +247,7 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
             Node b;
 
             DataValue dvi = teach.instantiate(prefix, ps, piv, pval,
-                    constants, guard, p, new LinkedHashSet<>(), false);
+                    constants, guard, p, new LinkedHashSet<>());
             ParValuation otherPval = new ParValuation();
             otherPval.putAll(pval);
                 otherPval.put(p, dvi);
@@ -366,7 +366,7 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
             	DataValue dvi = null;
             	try {
             		// first solve using a constraint solver
-            		 dvi = teach.instantiate(prefix, ps, piv, pval, constants, guard, p, oldDvs, false);
+            		 dvi = teach.instantiate(prefix, ps, piv, pval, constants, guard, p, oldDvs);
 	            	
 	            	// if merging of guards is done properly, there should be no case where the guard is not instantiable.
 	            	if (dvi == null || dvi.getId().equals(Double.valueOf(0.0))) {
