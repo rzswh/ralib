@@ -84,4 +84,10 @@ public class Constants extends Mapping<SymbolicDataValue.Constant, DataValue<?>>
 		return sumConst.get(index);
 		
 	}
+	
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Constants").append(super.toString()).append(System.lineSeparator()).append("SumConstants").append(sumConstants);
+		return builder.toString();
+	}
 }

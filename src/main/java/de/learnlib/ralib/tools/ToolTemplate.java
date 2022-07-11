@@ -22,7 +22,9 @@ import de.learnlib.ralib.automata.xml.RegisterAutomatonExporter;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataType;
 import de.learnlib.ralib.data.DataValue;
+import de.learnlib.ralib.data.SumConstants;
 import de.learnlib.ralib.data.util.SymbolicDataValueGenerator;
+import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.SumConstantGenerator;
 import de.learnlib.ralib.equivalence.HypVerifier;
 import de.learnlib.ralib.equivalence.IOCounterExampleLoopRemover;
 import de.learnlib.ralib.equivalence.IOCounterExamplePrefixFinder;
@@ -163,6 +165,13 @@ public abstract class ToolTemplate extends AbstractToolWithRandomWalk {
 			Arrays.stream(cstArray).forEach(c -> consts.put(cgen.next(c.getType()), c));
 		}
 		constants = consts;
+		
+		String sumcString = OPTION_CONSTANTS_SUMC.parse(config);
+		if (sumcString != null) {
+			DataValue<?>[] cstArray = parseDataValues(sumcString, types);
+			final SumConstantGenerator cgen = new SymbolicDataValueGenerator.SumConstantGenerator();
+			Arrays.stream(cstArray).forEach(cst -> constants.getSumCs().put(cgen.next(cst.getType()), cst));
+		}
 
 		teachers = super.buildTypeTheoryMapAndConfigureTheories(teacherClasses, config, types, sulParser.getInputs(),
 				consts);
