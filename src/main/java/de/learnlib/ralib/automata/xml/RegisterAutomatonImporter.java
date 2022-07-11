@@ -28,15 +28,18 @@ import de.learnlib.ralib.automata.output.OutputTransition;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataType;
 import de.learnlib.ralib.data.DataValue;
+import de.learnlib.ralib.data.SumConstants;
 import de.learnlib.ralib.data.SymbolicDataValue;
 import de.learnlib.ralib.data.SymbolicDataValue.Constant;
 import de.learnlib.ralib.data.SymbolicDataValue.Parameter;
 import de.learnlib.ralib.data.SymbolicDataValue.Register;
+import de.learnlib.ralib.data.SymbolicDataValue.SumConstant;
 import de.learnlib.ralib.data.VarMapping;
 import de.learnlib.ralib.data.VarValuation;
 import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.ConstantGenerator;
 import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.ParameterGenerator;
 import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.RegisterGenerator;
+import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.SumConstantGenerator;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.OutputSymbol;
 import de.learnlib.ralib.words.ParameterizedSymbol;
@@ -62,6 +65,7 @@ public class RegisterAutomatonImporter {
     private final Map<ParameterizedSymbol, String[]> paramNames = new LinkedHashMap<>();
     private final Map<String, RALocation> stateMap = new LinkedHashMap<>();
     private final Map<String, Constant> constMap = new LinkedHashMap<>();
+    private final Map<String, SumConstant> sumConstMap = new LinkedHashMap<>();
     private final Map<String, Register> regMap = new LinkedHashMap<>();   
     private final Map<String, DataType> typeMap = new LinkedHashMap<>();
     
@@ -94,6 +98,7 @@ public class RegisterAutomatonImporter {
         getAlphabet(a.getAlphabet());
         
         getConstants(a.getConstants());
+        getSumConsts(a.getSumConstants());
         getRegisters(a.getGlobals());
 
         iora = new MutableRegisterAutomaton(consts, initialRegs);
@@ -125,8 +130,8 @@ public class RegisterAutomatonImporter {
             TransitionGuard p = new TransitionGuard();            
             if (gstring != null) {
                 Map<String, SymbolicDataValue> map = buildValueMap(
-                        constMap, regMap, (ps instanceof OutputSymbol) ? new LinkedHashMap<String, Parameter>() : paramMap);
-                ExpressionParser parser = new ExpressionParser(gstring, map);
+                        constMap, sumConstMap, regMap, (ps instanceof OutputSymbol) ? new LinkedHashMap<String, Parameter>() : paramMap);
+                ExpressionParser parser = new ExpressionParser(gstring, map, consts.getSumCs());
                 p = new TransitionGuard(parser.getPredicate());
             }
             
@@ -268,6 +273,28 @@ public class RegisterAutomatonImporter {
             consts.put(c, dv);
         }
         log.log(Level.FINEST,"Loading: " + consts);
+    }
+    
+    public void getSumConsts(RegisterAutomaton.SumConstants xml) {
+    	if (xml == null) {
+    		return;
+    	}
+        SumConstants sumC = consts.getSumCs();
+        SumConstantGenerator cgen = new SumConstantGenerator();
+        for (RegisterAutomaton.SumConstants.SumConstant def : xml.getSumConstant()) {
+            DataType type = getOrCreateType(def.type);
+            SumConstant c = cgen.next(type);     
+            sumConstMap.put(def.value, c);
+            sumConstMap.put(def.name, c);
+            log.log(Level.FINEST,def.name + " ->" + c);
+            DataValue dv;
+            if (type.getBase() == Integer.class)
+            	dv = new DataValue<Integer>(type, Integer.parseInt(def.value));
+            else 
+            	dv = new DataValue<Double>(type, Double.parseDouble(def.value));
+            
+            sumC.put(c, dv);
+        }
     }
     
 

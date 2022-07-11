@@ -75,6 +75,7 @@ public class RandomSymbolSelector extends InputSelector{
 			}
 
 			List<DataValue<?>> related = new ArrayList<>(oldSet);
+			related.addAll(constants.values(t));
 			related = new ArrayList<>(teacher.getAllNextValues(related));
 			if (draw > drawRegister + drawHistory && draw <= drawRegister + drawHistory + drawRelated
 					&& !related.isEmpty()) {

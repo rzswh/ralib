@@ -93,7 +93,7 @@ public class TestIneqOutputTreeOpt extends RaLibTestSuite {
         CanonizingIOCacheOracle hypCache = new CanonizingIOCacheOracle(hypOracle);
         IOFilter hypFilter = new IOFilter(hypCache, inputs);
         
-        ConstraintSolver solver = new SimpleConstraintSolver();
+        ConstraintSolver solver = TestUtil.getZ3Solver();
         
         MultiTheoryTreeOracle sulMTO = new MultiTheoryTreeOracle(
                 sulFilter, sulOracle, teachers, consts, solver);

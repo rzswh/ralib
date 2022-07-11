@@ -16,9 +16,13 @@
  */
 package de.learnlib.ralib.tools;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
@@ -27,6 +31,7 @@ import java.util.stream.Collectors;
 
 import de.learnlib.oracles.DefaultQuery;
 import de.learnlib.ralib.automata.RegisterAutomaton;
+import de.learnlib.ralib.automata.util.RAToDot;
 import de.learnlib.ralib.automata.xml.RegisterAutomatonExporter;
 import de.learnlib.ralib.automata.xml.RegisterAutomatonImporter;
 import de.learnlib.ralib.data.Constants;
@@ -332,10 +337,18 @@ public class IOSimulator extends AbstractToolWithRandomWalk {
                 try {
                     FileOutputStream fso = new FileOutputStream("model.xml");
                     RegisterAutomatonExporter.write(hyp, consts, fso);
-                    
                 } catch (FileNotFoundException ex) {
                     System.out.println("... export failed");
                 }
+                System.out.println("exporting model to model.dot");
+				RAToDot dotExport = new RAToDot(hyp, true);
+				String dot = dotExport.toString();
+
+				try (BufferedWriter wr = new BufferedWriter(new FileWriter(new File("model.dot")))) {
+					wr.write(dot, 0, dot.length());
+				} catch (IOException ex) {
+					System.out.println("... export failed");
+				}
             }
         }
         

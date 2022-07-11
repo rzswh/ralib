@@ -45,4 +45,6 @@ public interface SymbolicDataExpression {
 	 * Given a valuation of the encapsulated SDVs, instantiates the expression.
 	 */
 	public DataValue<?> instantiateExprForValuation(Mapping<SymbolicDataValue, DataValue<?>> valuation);
+	
+	public DataType getType();
 }

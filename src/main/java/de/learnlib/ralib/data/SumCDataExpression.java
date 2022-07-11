@@ -75,5 +75,10 @@ public class SumCDataExpression implements SymbolicDataExpression{
 		return this.expr;
 	}
 
+	@Override
+	public DataType getType() {
+		return expr.getType();
+	}
+
 
 }

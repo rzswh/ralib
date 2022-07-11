@@ -22,8 +22,16 @@ import de.learnlib.ralib.automata.guards.Conjunction;
 import de.learnlib.ralib.automata.guards.Disjunction;
 import de.learnlib.ralib.automata.guards.GuardExpression;
 import de.learnlib.ralib.automata.guards.Relation;
+import de.learnlib.ralib.automata.guards.SumCAtomicGuardExpression;
 import de.learnlib.ralib.automata.guards.TrueGuardExpression;
+import de.learnlib.ralib.data.DataValue;
+import de.learnlib.ralib.data.SumCDataExpression;
+import de.learnlib.ralib.data.SumConstants;
+import de.learnlib.ralib.data.SymbolicDataExpression;
 import de.learnlib.ralib.data.SymbolicDataValue;
+import de.learnlib.ralib.data.SymbolicDataValue.SumConstant;
+import de.learnlib.ralib.theory.inequality.SumCDataValue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,10 +48,12 @@ public class ExpressionParser {
     private final Map<String, SymbolicDataValue> pMap;
       
     private GuardExpression predicate;
+	private SumConstants consts;
     
-    public ExpressionParser(String exp, Map<String, SymbolicDataValue> pMap) {
+    public ExpressionParser(String exp, Map<String, SymbolicDataValue> pMap, SumConstants consts) {
         expLine = exp.trim();
         this.pMap = pMap;
+        this.consts = consts;
         
         buildExpression();
     }
@@ -126,9 +136,34 @@ public class ExpressionParser {
                     "this should not happen!!! " + pred + " in " + expLine);
         }
         
-        SymbolicDataValue left = pMap.get(related[0].trim());
-        SymbolicDataValue right = pMap.get(related[1].trim());
-        return new AtomicGuardExpression(left, relation, right);          
+        SymbolicDataExpression left = resolve(related[0].trim());
+        SymbolicDataExpression right = resolve(related[1].trim());
+        if (left instanceof SymbolicDataValue && right instanceof SymbolicDataValue) {
+        	return new AtomicGuardExpression((SymbolicDataValue) left, relation, (SymbolicDataValue) right);          
+        }
+        if (left instanceof SumCDataExpression || right instanceof SumCDataExpression) {
+        	SymbolicDataValue leftVar = left.getSDV();
+        	DataValue leftConst = (left instanceof SumCDataExpression) ? ((SumCDataExpression) left).getConstant() : null;
+        	SymbolicDataValue rightVar = right.getSDV();
+        	DataValue rightConst = (right instanceof SumCDataExpression) ? ((SumCDataExpression) right).getConstant() : null;
+        	return new SumCAtomicGuardExpression<SymbolicDataValue, SymbolicDataValue>(leftVar, leftConst, relation, rightVar, rightConst);
+        }
+        throw new UnsupportedOperationException("Unable to resolve expression " + pred);
+    }
+    
+    private SymbolicDataExpression resolve(String expr) {
+    	expr = expr.trim();
+    	if (expr.contains("+")) {
+    		String[] operands = expr.split("\\+");
+    		if (operands.length > 2) {
+    			throw new UnsupportedOperationException("Currently only supporting sums with two elements");
+    		}
+    		SymbolicDataExpression op1 = pMap.get(operands[0].trim());
+    		SumConstant c = (SumConstant) pMap.get(operands[1].trim());
+    		return new SumCDataExpression (op1, this.consts.get(c));
+    	} else {
+    		return pMap.get(expr);
+    	}
     }
     
     /**

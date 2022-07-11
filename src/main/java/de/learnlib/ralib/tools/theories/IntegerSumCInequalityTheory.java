@@ -15,8 +15,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,10 +32,7 @@ import de.learnlib.ralib.theory.DataRelation;
 import de.learnlib.ralib.theory.inequality.IntervalDataValue;
 import de.learnlib.ralib.theory.inequality.SumCDataValue;
 
-//TODO instead of 0 reduction, just use output constants (constants that are only found in outputs and should not be used)
 /**
- * This theory implementation has a failing test case (see {@code TestTwoWayTCPTreeOracle}). 
- * Integers are messy to work with. 
  */
 public class IntegerSumCInequalityTheory extends IntegerInequalityTheory implements SumCTheory{
 
@@ -62,7 +61,7 @@ public class IntegerSumCInequalityTheory extends IntegerInequalityTheory impleme
 	}
 
 	public void setSumcConstants(SumConstants constants) {
-		this.sortedSumConsts = new ArrayList<>(constants.values(this.type));
+		this.sortedSumConsts = new ArrayList<>(constants.values(this.getType()));
 	}
 	
 	public void setConstants(Constants constants) {
@@ -103,18 +102,15 @@ public class IntegerSumCInequalityTheory extends IntegerInequalityTheory impleme
 	 * 
 	 */
 	private List<DataValue<Integer>> makeNewPotsWithSumC(List<DataValue<Integer>> dvs) {
-		Stream<DataValue<Integer>> dvWithoutConsts = 
-				dvs.stream().filter(dv -> !regularConstants.contains(dv));
-		Stream<DataValue<Integer>> valAndSums = dvWithoutConsts
+		Set<DataValue<Integer>> dvSet = new HashSet<>(dvs);
+		Stream<DataValue<Integer>> valAndSums = dvs.stream()
 				.map(val -> Stream.concat(Stream.of(val), 
 					sortedSumConsts.stream()
 						.map(sum -> new SumCDataValue<Integer>(val, sum))
-						.filter(sumc -> !dvs.contains(sumc)))
+						.filter(sumc -> !dvSet.contains(sumc)))
 				).flatMap(s -> s).distinct();
 		
-		List<DataValue<Integer>> valAndSumsAndConsts = valAndSums //Stream.concat(valAndSums, regularConstants.stream())
-				.collect(Collectors.toList()); 
-
+		List<DataValue<Integer>> valAndSumsAndConsts = valAndSums.collect(Collectors.toList()); 
 		return valAndSumsAndConsts;
 	}
 	
@@ -152,8 +148,6 @@ public class IntegerSumCInequalityTheory extends IntegerInequalityTheory impleme
 		else {
 			// the superclass should complete this list with in-between values.
 			Collection<DataValue<Integer>> nextValues = super.getAllNextValues(potential);
-			// We are not interested non positive numbers. (incl constant)
-			nextValues.removeIf(v -> v.getId() <= 0L);
 			return nextValues;
 		}
 	}

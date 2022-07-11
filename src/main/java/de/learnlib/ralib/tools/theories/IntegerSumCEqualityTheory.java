@@ -8,15 +8,12 @@ import java.util.List;
 
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataValue;
-import de.learnlib.ralib.mapper.Determinizer;
 import de.learnlib.ralib.theory.DataRelation;
 import de.learnlib.ralib.theory.equality.SumCEqualityTheory;
 import de.learnlib.ralib.theory.inequality.SumCDataValue;
 
 public class IntegerSumCEqualityTheory extends SumCEqualityTheory<Integer> {
 	
-	
-	// maxSumC : the biggest sum constant
 	
 	// Fresh values are generated at a fresh step distance from each other, in increasing order, starting from 0.
 	// The fresh step is either 1 in case there are no sum constants, or maxSumC x FRESH_FACTOR

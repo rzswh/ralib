@@ -116,7 +116,7 @@ import javax.xml.bind.annotation.XmlValue;
  *             &lt;complexContent>
  *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *                 &lt;sequence>
- *                   &lt;element name="constant" maxOccurs="unbounded" minOccurs="0">
+ *                   &lt;element name="sumConstant" maxOccurs="unbounded" minOccurs="0">
  *                     &lt;complexType>
  *                       &lt;simpleContent>
  *                         &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
@@ -227,6 +227,7 @@ import javax.xml.bind.annotation.XmlValue;
 @XmlType(name = "", propOrder = {
     "alphabet",
     "constants",
+    "sumConstants",
     "globals",
     "locations",
     "transitions"
@@ -238,6 +239,8 @@ public class RegisterAutomaton {
     protected RegisterAutomaton.Alphabet alphabet;
     @XmlElement(required = true)
     protected RegisterAutomaton.Constants constants;
+    @XmlElement(required = false)
+    protected RegisterAutomaton.SumConstants sumConstants;
     @XmlElement(required = true)
     protected RegisterAutomaton.Globals globals;
     @XmlElement(required = true)
@@ -273,6 +276,10 @@ public class RegisterAutomaton {
      */
     public RegisterAutomaton.Constants getConstants() {
         return constants;
+    }
+    
+    public RegisterAutomaton.SumConstants getSumConstants() {
+        return sumConstants;
     }
 
     /**
@@ -1016,7 +1023,7 @@ public class RegisterAutomaton {
      *   &lt;complexContent>
      *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
      *       &lt;sequence>
-     *         &lt;element name="constant" maxOccurs="unbounded" minOccurs="0">
+     *         &lt;element name="sumConstant" maxOccurs="unbounded" minOccurs="0">
      *           &lt;complexType>
      *             &lt;simpleContent>
      *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
@@ -1043,13 +1050,13 @@ public class RegisterAutomaton {
         protected List<RegisterAutomaton.Constants.Constant> constant;
 
         /**
-         * Gets the value of the constant property.
+         * Gets the value of the sumConstant property.
          *
          * <p>
          * This accessor method returns a reference to the live list, not a
          * snapshot. Therefore any modification you make to the returned list
          * will be present inside the JAXB object. This is why there is not a
-         * <CODE>set</CODE> method for the constant property.
+         * <CODE>set</CODE> method for the sumConstant property.
          *
          * <p>
          * For example, to add a new item, do as follows:
@@ -1166,7 +1173,138 @@ public class RegisterAutomaton {
             }
 
         }
+    }
+    
+    @XmlAccessorType(XmlAccessType.FIELD)
+    @XmlType(name = "", propOrder = {
+        "sumConstant"
+    })
+    public static class SumConstants {
+        protected List<RegisterAutomaton.SumConstants.SumConstant> sumConstant;
 
+        /**
+         * Gets the value of the sumConstant property.
+         *
+         * <p>
+         * This accessor method returns a reference to the live list, not a
+         * snapshot. Therefore any modification you make to the returned list
+         * will be present inside the JAXB object. This is why there is not a
+         * <CODE>set</CODE> method for the sumConstant property.
+         *
+         * <p>
+         * For example, to add a new item, do as follows:
+         * <pre>
+         *    getConstant().add(newItem);
+         * </pre>
+         *
+         *
+         * <p>
+         * Objects of the following type(s) are allowed in the list
+         * {@link RegisterAutomaton.SumConstants.SumConstant }
+         *
+         *
+         */
+        public List<RegisterAutomaton.SumConstants.SumConstant> getSumConstant() {
+            if (sumConstant == null) {
+                sumConstant = new ArrayList<RegisterAutomaton.SumConstants.SumConstant>();
+            }
+            return this.sumConstant;
+        }
+        
+        /**
+         * <p>
+         * Java class for anonymous complex type.
+         *
+         * <p>
+         * The following schema fragment specifies the expected content
+         * contained within this class.
+         *
+         * <pre>
+         * &lt;complexType>
+         *   &lt;simpleContent>
+         *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
+         *       &lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *       &lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" />
+         *     &lt;/extension>
+         *   &lt;/simpleContent>
+         * &lt;/complexType>
+         * </pre>
+         *
+         *
+         */
+        @XmlAccessorType(XmlAccessType.FIELD)
+        @XmlType(name = "", propOrder = {
+            "value"
+        })
+        public static class SumConstant {
+
+            @XmlValue
+            protected String value;
+            @XmlAttribute(name = "type")
+            protected String type;
+            @XmlAttribute(name = "name")
+            protected String name;
+
+            /**
+             * Gets the value of the value property.
+             *
+             * @return possible object is {@link String }
+             *
+             */
+            public String getValue() {
+                return value;
+            }
+
+            /**
+             * Sets the value of the value property.
+             *
+             * @param value allowed object is {@link String }
+             *
+             */
+            public void setValue(String value) {
+                this.value = value;
+            }
+
+            /**
+             * Gets the value of the type property.
+             *
+             * @return possible object is {@link String }
+             *
+             */
+            public String getType() {
+                return type;
+            }
+
+            /**
+             * Sets the value of the type property.
+             *
+             * @param value allowed object is {@link String }
+             *
+             */
+            public void setType(String value) {
+                this.type = value;
+            }
+
+            /**
+             * Gets the value of the name property.
+             *
+             * @return possible object is {@link String }
+             *
+             */
+            public String getName() {
+                return name;
+            }
+
+            /**
+             * Sets the value of the name property.
+             *
+             * @param value allowed object is {@link String }
+             *
+             */
+            public void setName(String value) {
+                this.name = value;
+            }
+        }
     }
 
     /**

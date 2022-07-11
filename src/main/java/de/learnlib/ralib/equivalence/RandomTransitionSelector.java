@@ -84,7 +84,7 @@ public class RandomTransitionSelector extends InputSelector{
 			Theory teacher = teachers.get(paramType);
 			List<DataValue<Object>> historyValues = new ArrayList<>(DataWords.valSet(run, paramType));
 			historyValues.addAll(currentValuation.values(paramType));
-			historyValues.removeAll(this.constants.values(paramType));
+			historyValues.addAll(consts.values(paramType));
 			List hisList = new ArrayList<>(historyValues);
 			DataValue fVal = teacher.getFreshValue(hisList);
 			List<DataValue<Object>> regValues = new ArrayList<>(regValuation.values(paramType));
