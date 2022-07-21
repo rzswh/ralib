@@ -30,7 +30,6 @@ import de.learnlib.ralib.sul.CanonizingSULOracle;
 import de.learnlib.ralib.sul.DataWordSUL;
 import de.learnlib.ralib.sul.DeterminizerDataWordSUL;
 import de.learnlib.ralib.theory.Theory;
-import de.learnlib.ralib.tools.config.ConfigurationOption;
 import de.learnlib.ralib.tools.theories.SymbolicTraceCanonizer;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.PSymbolInstance;
@@ -41,11 +40,9 @@ import de.learnlib.ralib.words.ParameterizedSymbol;
  */
 public class RaLibLearningTestSuite extends RaLibTestSuite {
 	
-	protected static ConfigurationOption.StringOption SEEDS_OPTION = new ConfigurationOption
-    		.StringOption("seeds", "Coma seperated seeds used during learning experiments", "0", true);
-	
 	private Consumer<RegisterAutomaton> hypValidator;
 	private IOEquivalenceOracleBuilder equOracleBuilder;
+	private long[] seeds;
 	
 	public RaLibLearningTestSuite() {
 	}
@@ -55,6 +52,7 @@ public class RaLibLearningTestSuite extends RaLibTestSuite {
 	public void init() {
 		this.hypValidator = (hyp) -> {};
 		this.equOracleBuilder = new IOEquivalenceOracleBuilder();
+		this.seeds = super.getTestConfig().getSeeds();
 	}
 	
 	protected void setHypValidator(Consumer<RegisterAutomaton> hypValidator) {
@@ -68,11 +66,15 @@ public class RaLibLearningTestSuite extends RaLibTestSuite {
 	protected IOEquivalenceOracleBuilder getEquOracleBuilder() {
 		return this.equOracleBuilder;
 	}
+	
+	protected void setSeeds(long[] seeds) {
+		this.seeds = seeds;
+	}
  	
 
 	/**
 	 * Launches learning experiments for IO, one for each seed in
-	 * {@link RaLibLearningTestSuite#getSeeds()}.
+	 * {@link RaLibLearningTestSuite#getSeeds()}, unless {@link RaLibLearningTestSuite#seeds} has been set.
 	 * 
 	 * @param sul
 	 *            the system to be tested
@@ -92,13 +94,13 @@ public class RaLibLearningTestSuite extends RaLibTestSuite {
 	 */
 	protected void runIOLearningExperiments(DataWordSUL sul, Map<DataType, Theory> teachers, Constants consts,
 			boolean freshSupport,
-			// boolean canonizationSupport,
 			ConstraintSolver solver, ParameterizedSymbol[] actionSymbols, ParameterizedSymbol errorSymbol) {
 		ParameterizedSymbol[] inputSymbols = Arrays.stream(actionSymbols).filter(s -> (s instanceof InputSymbol))
 				.toArray(ParameterizedSymbol[]::new);
 
-		for (long seed : super.getTestConfig().getSeeds()) {
-			logger.log(Level.FINE, "SEED={0}", seed);
+		for (long seed : seeds) {
+			try {
+			logger.log(Level.INFO, "SEED={0}", seed);
 			Random random = new Random(seed);
 			MultiTheoryTreeOracle mto = null;
 			if (freshSupport) {
@@ -165,6 +167,9 @@ public class RaLibLearningTestSuite extends RaLibTestSuite {
 			logger.log(Level.FINE, "FINAL HYP: {0}", hyp);
 			logger.log(Level.FINE, "Resets: {0}", sul.getResets());
 			logger.log(Level.FINE, "Inputs: {0}", sul.getInputs());
+			} catch (Exception e) {
+				Assert.fail(String.format("Learning experiment failed for seed %d", seed), e);
+			}
 		}
 	}
 }

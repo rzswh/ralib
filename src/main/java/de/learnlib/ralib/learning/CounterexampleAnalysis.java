@@ -185,7 +185,6 @@ public class CounterexampleAnalysis {
         boolean hypRefinesTransition = 
                 hypRefinesTransitions(location, act, resSul.getSdt(), pivSul);
         
-
         IndexResult indx = new IndexResult(idx, (sulHasMoreRegs || !hypRefinesTransition) ? 
                 IndexStatus.HAS_CE_AND_REFINES : IndexStatus.HAS_CE_NO_REFINE,
                 slice);

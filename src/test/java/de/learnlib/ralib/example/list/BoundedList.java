@@ -45,7 +45,7 @@ public class BoundedList {
 	public boolean itemnull(Integer e) {
 		return (useNull && NULL_VALUE == e) || !list.contains(e);
 	}
-
+	
 	public void insert(Integer e1, Integer e2) {
 		int i=1;
 		if (useNull && e2 == NULL_VALUE) {

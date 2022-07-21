@@ -147,7 +147,6 @@ class AutomatonBuilder {
             Parameter p = e.getKey();
             // remapping is null for prime rows ...
             Register rNew = (remapping == null) ? e.getValue() : (Register) inverseRemapping.get(e.getValue());
-//            keyForValue(remapping, e.getValue());
             if (p.getId() > max) {                
                 Parameter pNew = new Parameter(p.getType(), p.getId() - max);
                 assignments.put(rNew, pNew);

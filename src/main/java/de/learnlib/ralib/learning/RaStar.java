@@ -130,15 +130,13 @@ public class RaStar {
         do {
             
             log.logPhase("completing observation table");
-            while(!(obs.complete())) {};        
+            while(!(obs.complete())) {};
             log.logPhase("completed observation table");
 
-            //System.out.println(obs.toString());
-            
             // if it's an IO system, then we make it output complete (for which is needed for CE analysis)
             AutomatonBuilder ab = this.ioMode? new IOAutomatonBuilder(obs.getComponents(), consts) : 
-            	new AutomatonBuilder(obs.getComponents(), consts);            
-            hyp = ab.toRegisterAutomaton();        
+            	new AutomatonBuilder(obs.getComponents(), consts);
+            hyp = ab.toRegisterAutomaton();
             
             //FIXME: the default logging appender cannot log models and data structures
             System.out.println("New Hyp: \n" + hyp.toString());
@@ -177,8 +175,8 @@ public class RaStar {
         
         //System.out.println("CE ANALYSIS: " + ce + " ; S:" + sulce + " ; H:" + hypce);
         
-        CEAnalysisResult res = analysis.analyzeCounterexample(ce.getInput());     
-        obs.addSuffix(res.getSuffix());       
+        CEAnalysisResult res = analysis.analyzeCounterexample(ce.getInput());
+        obs.addSuffix(res.getSuffix());
         return true;
     }
             
