@@ -141,7 +141,8 @@ class Component {
         	primeRow.addSuffix(suffix, oracle);
         } catch(DecoratedRuntimeException exc) { 
         	throw exc.addDecoration("branching", this.branching)
-        	.addDecoration("observation table", obs);
+//        	.addDecoration("observation table", obs)
+        	;
         }
         Map<Row, VarMapping> otherOld = new LinkedHashMap<>(otherRows);
         otherRows.clear();
