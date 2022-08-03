@@ -74,7 +74,7 @@ public class OutputTransition extends Transition {
             }
         }
         
-        Mapping<SymbolicDataValue, DataValue<?>> valuation = new Mapping<>(registers, consts);
+        Mapping<SymbolicDataValue, DataValue<?>> valuation = new Mapping<>(registers, consts, parameters);
         
         // check other parameters
         for (Entry<Parameter,? extends  SymbolicDataExpression> e : output.getOutput()) {

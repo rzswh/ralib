@@ -41,6 +41,14 @@ public interface SymbolicDataExpression {
 		return newSDV;
 	}
 	
+	public default SymbolicDataExpression relabel(VarMapping<? extends SymbolicDataValue, ? extends SymbolicDataValue> relabeling) {
+		if (relabeling.containsKey(getSDV())) {
+			SymbolicDataValue newSDV = relabeling.get(getSDV());
+			return swapSDV(newSDV);
+		}
+		return this;
+	}
+	
 	/**
 	 * Given a valuation of the encapsulated SDVs, instantiates the expression.
 	 */

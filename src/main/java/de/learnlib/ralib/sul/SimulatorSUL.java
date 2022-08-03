@@ -92,7 +92,7 @@ public class SimulatorSUL extends DataWordSUL {
         
         boolean found = false;
         for (Transition t : this.model.getTransitions(loc, i.getBaseSymbol())) {
-            ParValuation pval = new ParValuation(i);
+        	ParValuation pval  = new ParValuation(i);
             if (t.isEnabled(register, pval, consts)) {
                 found = true;
                 register = t.execute(register, pval, consts);
@@ -133,14 +133,8 @@ public class SimulatorSUL extends DataWordSUL {
             }
             else {
                 SymbolicDataExpression sv = mapping.getOutput().get(p);    
-                Mapping varMapping = new Mapping(register, consts);
-                //TODO this is not sufficient, to instantiate expr we should also pass along constants
-                if (sv.isParameter())
-                	throw new UnsupportedOperationException("not supported yet.");
-                else if (sv.isConstant()) {
-                	vals[i] = this.consts.get(sv);
-                } else
-                	vals[i] = sv.instantiateExprForValuation(varMapping);
+                Mapping varMapping = new Mapping(register, consts, pval);
+                vals[i] = sv.instantiateExprForValuation(varMapping);
             }
             assert vals[i] != null;
             pval.put(p, vals[i]);
