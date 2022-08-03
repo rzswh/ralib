@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<register-automaton>
+   <alphabet>
+      <inputs>
+         <symbol name="check"> 
+            <param type="double" name="abs"/>
+            <param type="double" name="c1"/>
+            <param type="double" name="c2"/>
+         </symbol>
+      </inputs>
+      <outputs>
+         <symbol name="One"/>
+         <symbol name="Two"/>
+         <symbol name="Three"/>
+         <symbol name="Four"/>
+      </outputs>
+   </alphabet>
+   <constants>
+   </constants>	
+   <sumConstants>
+   	  <sumConstant type="double" name="TWAIT">100.0</sumConstant>
+   </sumConstants>  
+   <globals>
+      <!-- <variable type="double" name="TWAIT">0.0</variable> -->
+   </globals>
+   <locations>
+      <location name="id0"/>
+      <location name="id1" initial="true"/> 
+      <location name="id2"/>
+      <location name="id3"/>
+      <location name="id4"/>
+      <location name="id5"/>
+      <location name="id6"/>
+      <location name="id7"/>
+   </locations>
+   <transitions>
+      <transition from="id1" to="id2" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &gt; c1</guard>
+      </transition>
+      <transition from="id3" to="id4" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &gt; c1</guard>
+      </transition>
+      <transition from="id5" to="id6" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &gt; c1</guard>
+      </transition>
+
+
+      <transition from="id3" to="id2" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &lt; c1 || abs + TWAIT == c1 &amp;&amp; abs + TWAIT &lt; c2 || abs + TWAIT == c2</guard>
+      </transition>
+      <transition from="id5" to="id4" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &lt; c1 || abs + TWAIT == c1 &amp;&amp; abs + TWAIT &lt; c2 || abs + TWAIT == c2</guard>
+      </transition>
+
+      <transition from="id3" to="id0" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &lt; c1 || abs + TWAIT == c1 &amp;&amp; abs + TWAIT &gt; c2</guard>
+      </transition>
+      <transition from="id5" to="id2" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &lt; c1 || abs + TWAIT == c1 &amp;&amp; abs + TWAIT &gt; c2</guard>
+      </transition>
+      <transition from="id7" to="id4" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &gt; c2</guard>
+      </transition>
+
+      <transition from="id1" to="id0" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT &lt; c1 || abs + TWAIT == c1</guard>
+      </transition>
+      <transition from="id7" to="id6" symbol="check" params="abs,c1,c2">
+         <guard>abs + TWAIT  &lt; c2|| abs + TWAIT == c2</guard>
+      </transition>
+
+      <transition from="id0" to="id1" symbol="One"/>
+      <transition from="id2" to="id3" symbol="Two"/>
+      <transition from="id4" to="id5" symbol="Three"/>
+      <transition from="id6" to="id7" symbol="Four"/>
+   </transitions>
+</register-automaton>

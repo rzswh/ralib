@@ -25,11 +25,13 @@ import de.learnlib.ralib.automata.output.OutputTransition;
 import de.learnlib.ralib.data.Constants;
 import de.learnlib.ralib.data.DataType;
 import de.learnlib.ralib.data.DataValue;
+import de.learnlib.ralib.data.SumConstants;
 import de.learnlib.ralib.data.SymbolicDataExpression;
 import de.learnlib.ralib.data.SymbolicDataValue;
 import de.learnlib.ralib.data.SymbolicDataValue.Constant;
 import de.learnlib.ralib.data.SymbolicDataValue.Parameter;
 import de.learnlib.ralib.data.SymbolicDataValue.Register;
+import de.learnlib.ralib.data.SymbolicDataValue.SumConstant;
 import de.learnlib.ralib.data.util.SymbolicDataValueGenerator.ParameterGenerator;
 import de.learnlib.ralib.words.InputSymbol;
 import de.learnlib.ralib.words.OutputSymbol;
@@ -60,7 +62,19 @@ public class RegisterAutomatonExporter {
             c.setType(e.getKey().getType().getName());
             c.setValue(e.getValue().getId().toString());
             ret.getConstant().add(c);
-        }        
+        }    
+        return ret;
+    }
+    
+    private static RegisterAutomaton.SumConstants exportSumConstants(SumConstants sumConsts) {
+    	RegisterAutomaton.SumConstants ret = factory.createRegisterAutomatonSumConstants();
+        for (Entry<SumConstant, DataValue<?>> e : sumConsts) {
+        	RegisterAutomaton.SumConstants.SumConstant c = factory.createRegisterAutomatonSumConstantsSumConstant();
+        	c.setName(e.getKey().toString());
+        	c.setType(e.getKey().getType().getName());
+        	c.setValue(e.getValue().getId().toString());
+        	ret.getSumConstant().add(c);
+        }
         return ret;
     }
 
@@ -288,6 +302,9 @@ public class RegisterAutomatonExporter {
         Map<String, DataType> tmp = new HashMap<>();
         ret.setAlphabet(acts);
         ret.setConstants(exportConstants(c));
+        if (c.getSumCs() != null) {
+        	ret.setSumConstants(exportSumConstants(c.getSumCs()));
+        }
         ret.setLocations(exportLocations(ra, ra.getStates()));
         ret.setTransitions(exportTransitions(ra.getTransitions(), tmp));
         ret.setGlobals(exportRegisters(ra.getRegisters(), tmp));

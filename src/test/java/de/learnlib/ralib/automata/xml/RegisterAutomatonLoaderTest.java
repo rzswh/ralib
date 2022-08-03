@@ -44,4 +44,23 @@ public class RegisterAutomatonLoaderTest extends RaLibTestSuite {
 
         logger.log(Level.FINE, "Printed: {0}", loader.getRegisterAutomaton());
     }
+    
+    @Test
+    public void testLoadingGearAutomaton() {
+
+        RegisterAutomatonImporter loader = TestUtil.getLoader(
+                "/de/learnlib/ralib/automata/xml/gear.xml");
+
+        logger.log(Level.FINE, "Printed: {0}", loader.getRegisterAutomaton());
+    }    
+    
+    
+    @Test
+    public void testLoadingCoolerAutomaton() {
+
+        RegisterAutomatonImporter loader = TestUtil.getLoader(
+                "/de/learnlib/ralib/automata/xml/cooler.xml");
+
+        logger.log(Level.FINE, "Printed: {0}", loader.getRegisterAutomaton());
+    }
 }

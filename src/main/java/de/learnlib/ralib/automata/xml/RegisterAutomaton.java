@@ -281,6 +281,17 @@ public class RegisterAutomaton {
     public RegisterAutomaton.SumConstants getSumConstants() {
         return sumConstants;
     }
+    
+    /**
+     * Sets the value of the sumConstants property.
+     *
+     * @param value allowed object is {@link RegisterAutomaton.SumConstants }
+     *
+     */
+    public void setSumConstants(RegisterAutomaton.SumConstants value) {
+        this.sumConstants = value;
+    }
+
 
     /**
      * Sets the value of the constants property.

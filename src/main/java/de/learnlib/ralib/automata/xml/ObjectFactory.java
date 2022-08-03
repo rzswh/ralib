@@ -96,6 +96,14 @@ public class ObjectFactory {
     public RegisterAutomaton.Constants createRegisterAutomatonConstants() {
         return new RegisterAutomaton.Constants();
     }
+    
+    /**
+     * Create an instance of {@link RegisterAutomaton.SumConstants }
+     *
+     */
+    public RegisterAutomaton.SumConstants createRegisterAutomatonSumConstants() {
+        return new RegisterAutomaton.SumConstants();
+    }
 
     /**
      * Create an instance of {@link RegisterAutomaton.Alphabet }
@@ -168,6 +176,14 @@ public class ObjectFactory {
      */
     public RegisterAutomaton.Constants.Constant createRegisterAutomatonConstantsConstant() {
         return new RegisterAutomaton.Constants.Constant();
+    }
+    
+    /**
+     * Create an instance of {@link RegisterAutomaton.SumConstants.SumConstant }
+     *
+     */
+    public RegisterAutomaton.SumConstants.SumConstant createRegisterAutomatonSumConstantsSumConstant() {
+        return new RegisterAutomaton.SumConstants.SumConstant();
     }
 
     /**

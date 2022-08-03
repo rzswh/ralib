@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<register-automaton>
+   <alphabet>
+      <inputs>
+         <symbol name="get_temp"> 
+            <param type="double" name="inp.temp"/> 
+         </symbol>
+      </inputs>
+      <outputs>
+         <symbol name="Off"/>
+         <symbol name="On"/>
+      </outputs>
+   </alphabet>
+   <constants>
+   	  <constant type="double" name="thresh">1.0</constant>
+   </constants>   
+   <globals>
+   </globals>
+   <locations>
+      <location name="id1" initial="true"/> 
+      <location name="id2"/>
+      <location name="id3"/>
+   </locations>
+   <transitions>
+ 
+      <transition from="id1" to="id2" symbol="get_temp" params="inp.temp">
+         <guard> inp.temp &lt; thresh || inp.temp == thresh</guard>
+      </transition>
+
+      <transition from="id1" to="id3" symbol="get_temp" params="inp.temp">
+         <guard> inp.temp &gt; thresh</guard>
+      </transition>
+ 
+      <transition from="id2" to="id1" symbol="Off"/>
+      <transition from="id3" to="id1" symbol="On"/>
+   </transitions>
+</register-automaton>
