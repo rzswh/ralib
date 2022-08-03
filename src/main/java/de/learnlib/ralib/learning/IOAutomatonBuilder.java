@@ -119,7 +119,14 @@ class IOAutomatonBuilder extends AutomatonBuilder {
                 
                 if (left instanceof Parameter) {
                     if (right instanceof Parameter) {
-                        throw new UnsupportedOperationException("not implemented yet.");
+                    	 if (((Parameter) left).getId() > ((Parameter) right).getId()) {
+                   		  p = (Parameter) left;
+                   		  sv = right;
+                   	  } else {
+                   		  p = (Parameter) right;
+                   		  sv = left;
+                   	  }
+//                      throw new UnsupportedOperationException("not implemented yet.");
                     }
                     else {
                         p = (Parameter) left;
@@ -145,7 +152,20 @@ class IOAutomatonBuilder extends AutomatonBuilder {
                   
                   if (left instanceof Parameter) {
                       if (right instanceof Parameter) {
-                          throw new UnsupportedOperationException("not implemented yet.");
+                    	  if (((Parameter) left).getId() > ((Parameter) right).getId()) {
+                    		  p = (Parameter) left;
+                    		  sv = right;
+                    		  if (nbe.getRightConst() != null) {
+                            	  sv = new SumCDataExpression(sv, nbe.getRightConst());
+                              }
+                    	  } else {
+                    		  p = (Parameter) right;
+                    		  sv = left;
+                    		  if (nbe.getLeftConst() != null) {
+                            	  sv = new SumCDataExpression(sv, nbe.getLeftConst());
+                              }
+                    	  }
+//                          throw new UnsupportedOperationException("not implemented yet.");
                       }
                       else {
                           p = (Parameter) left;
