@@ -43,6 +43,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
+
 import javax.xml.bind.JAXB;
 
 
@@ -173,7 +175,7 @@ public class RegisterAutomatonExporter {
         ret.setTo(t.getDestination().getName());
         ret.setSymbol(t.getLabel().getName());                
         ret.setAssignments(exportAssignments(t.getAssignment()));
-        String g = exportGuard(t.getGuard());
+        String g = exportGuard(t.getGuard(), t);
         if (g != null && g.length() > 0) {
             ret.setGuard(g);    
         }
@@ -194,61 +196,70 @@ public class RegisterAutomatonExporter {
         
         //ret.setGuard(exportGuard(t.getGuard()));        
 
-        String params = "";
+//        String params = "";
         OutputMapping outMap = t.getOutput();
-        ParameterGenerator pgen = new ParameterGenerator();
-        int idx=1;
-        for (DataType type : t.getLabel().getPtypes()) {
-            Parameter p = pgen.next(type);
-            if (outMap.getFreshParameters().contains(p)) {
-                
-                // find out register that stores paramater
-                boolean found = false;
-                for (RegisterAutomaton.Transitions.Transition.Assignments.Assign a : assign.getAssign()) {
-                    if (a.getValue().equals(p.toString())) {
-                        found = true;                        
-                        params += a.getTo() + ",";
-                        a.setValue("__fresh__");
-                    }
-                }
-                
-                if (!found) {
-                    throw new IllegalStateException("Exporter does not support fresh values that are not stored.");
-                }
-            }
-            else {
-                SymbolicDataExpression out = outMap.getOutput().get(p);
-                // assignments are assumed to happen before 
-                // output by the parser
-                if (out instanceof Register) {
-                	Register reg = (Register)out;
-                    String tmpName = "tmp_" + reg.getType().getName() + "_" + idx;
-                    tmp.put(tmpName, reg.getType());
-                    RegisterAutomaton.Transitions.Transition.Assignments.Assign a =
-                            factory.createRegisterAutomatonTransitionsTransitionAssignmentsAssign();
-                    
-                    a.setTo(tmpName);
-                    a.setValue(out.toString());                    
-                    assign.getAssign().add(a);
-                    params += tmpName + ",";
-                } else {
-                    params += out.toString() + ",";
-                }
-            }
-            idx++;
-        }        
-        
-        if (params.length() > 0) {
-            params = params.substring(0, params.length() -1);
-            ret.setParams(params);
+        for (Map.Entry<Parameter, ? extends SymbolicDataExpression> entry : outMap.getOutput()) {
+        	RegisterAutomaton.Transitions.Transition.Assignments.Assign a = 
+                    factory.createRegisterAutomatonTransitionsTransitionAssignmentsAssign();
+        	a.setTo(entry.getKey().toString());
+        	a.setValue(entry.getValue().toString());
+        	assign.getAssign().add(a);
         }
+
+//		old way of exporting output mapping
+//        ParameterGenerator pgen = new ParameterGenerator();
+//        int idx=1;
+//        for (DataType type : t.getLabel().getPtypes()) {
+//            Parameter p = pgen.next(type);
+//            if (outMap.getFreshParameters().contains(p)) {
+//                
+//                // find out register that stores paramater
+//                boolean found = false;
+//                for (RegisterAutomaton.Transitions.Transition.Assignments.Assign a : assign.getAssign()) {
+//                    if (a.getValue().equals(p.toString())) {
+//                        found = true;                        
+//                        params += a.getTo() + ",";
+//                        a.setValue("__fresh__");
+//                    }
+//                }
+//                
+//                if (!found) {
+//                    throw new IllegalStateException("Exporter does not support fresh values that are not stored.");
+//                }
+//            }
+//            else {
+//                SymbolicDataExpression out = outMap.getOutput().get(p);
+//                // assignments are assumed to happen before 
+//                // output by the parser
+//                if (out instanceof Register) {
+//                	Register reg = (Register)out;
+//                    String tmpName = "tmp_" + reg.getType().getName() + "_" + idx;
+//                    tmp.put(tmpName, reg.getType());
+//                    RegisterAutomaton.Transitions.Transition.Assignments.Assign a =
+//                            factory.createRegisterAutomatonTransitionsTransitionAssignmentsAssign();
+//                    
+//                    a.setTo(tmpName);
+//                    a.setValue(out.toString());                    
+//                    assign.getAssign().add(a);
+//                    params += tmpName + ",";
+//                } else {
+//                    params += out.toString() + ",";
+//                }
+//            }
+//            idx++;
+//        }        
+//        
+//        if (params.length() > 0) {
+//            params = params.substring(0, params.length() -1);
+//            ret.setParams(params);
+//        }
         
         ret.setAssignments(assign);
         
         return ret;
     }
     
-    private static String exportGuard(TransitionGuard guard) {
+    private static String exportGuard(TransitionGuard guard, Transition t) {
         String g = guard.toString();
         if (!g.contains("=") && !g.contains("<") && !g.contains(">")) {
             return null;
@@ -257,6 +268,9 @@ public class RegisterAutomatonExporter {
         g = g.replaceAll("true \\&\\&", "");
         g = g.replaceAll("\\&\\& true", "");
         g = g.replaceAll("\\(", "").replaceAll("\\)", "");
+        for (DataType type : t.getLabel().getPtypes()) {
+        	g = g.replaceAll(Pattern.quote("[" + type.getName() + "]"), "");
+        }
         return g;
     }
     

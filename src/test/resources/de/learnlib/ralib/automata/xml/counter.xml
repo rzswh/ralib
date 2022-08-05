@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<register-automaton>
+    <alphabet>
+        <inputs>
+            <symbol name="count">
+            </symbol>
+        </inputs>
+        <outputs>
+            <symbol name="Ocount">
+				<param type="double" name="last"/>
+				<param type="double" name="next"/>
+            </symbol>
+        </outputs>
+    </alphabet>
+    <constants>
+		<constant type="double" name="zero">0.0</constant>
+		<constant type="double" name="two">2.0</constant>  
+    </constants>
+    <sumConstants>
+		<sumConstant type="double" name="one">1.0</sumConstant>
+    </sumConstants>
+    <globals>
+		<variable type="double" name="r1">0.0</variable>
+    </globals>
+    <locations>
+		  <location name="l0" initial="true"/> 
+	      <location name="l1"/>
+	      <location name="l2"/>
+		<location name="l3"/>
+    </locations>
+	<transitions>
+		<transition from="l0" to="l1" symbol="count">
+            <assignments/>
+        </transition>
+		<transition from="l1" to="l2" symbol="Ocount" params="zero,zero">
+        	<assignments>
+			<!--	<assign to="last">zero</assign>
+				<assign to="next">zero</assign> -->
+				<assign to="r1">zero</assign>
+        	</assignments>
+        </transition>
+		<transition from="l2" to="l3" symbol="count">
+			<assignments/>
+        </transition>
+		<transition from="l3" to="l2" symbol="Ocount">
+        	<assignments>
+        		<assign to="last">r1</assign>
+				<assign to="next">last + one</assign>
+        	</assignments>
+        </transition>
+	</transitions>
+</register-automaton>

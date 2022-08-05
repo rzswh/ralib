@@ -152,7 +152,6 @@ public class ExpressionParser {
     }
     
     private SymbolicDataExpression resolve(String expr) {
-    	expr = expr.trim();
     	if (expr.contains("+")) {
     		String[] operands = expr.split("\\+");
     		if (operands.length > 2) {
