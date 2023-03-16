@@ -24,11 +24,14 @@ import de.learnlib.ralib.solver.ConstraintSolver;
 import de.learnlib.ralib.theory.Theory;
 import de.learnlib.ralib.words.PSymbolInstance;
 import de.learnlib.ralib.words.ParameterizedSymbol;
+
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import net.automatalib.words.Word;
 
 /**
@@ -49,9 +52,11 @@ class ObservationTable {
     
     private final Deque<Component> newComponents = new LinkedList<>();
 
+    private final Deque<ParameterizedSymbol> newSymbols = new LinkedList<>();
+
     private final TreeOracle oracle;
     
-    private final ParameterizedSymbol[] inputs;
+    private ParameterizedSymbol[] inputs;
     
     private final boolean ioMode;
     
@@ -76,19 +81,23 @@ class ObservationTable {
     }
         
     void addComponent(Component c) {
-        log.logEvent("Queueing component for obs: " + c);
+        // log.logEvent("Queueing component for obs: " + c);
         newComponents.add(c);
     }
     
     void addSuffix(GeneralizedSymbolicSuffix suffix) {
-        log.logEvent("Queueing suffix for obs: " +  suffix);
-        System.out.println("Adding suffix: " + suffix);
+        // log.logEvent("Queueing suffix for obs: " +  suffix);
+        // System.out.println("Adding suffix: " + suffix);
         newSuffixes.add(suffix);
     }
     
     void addPrefix(Word<PSymbolInstance> prefix) {
-        log.logEvent("Queueing prefix for obs: " + prefix);
+        // log.logEvent("Queueing prefix for obs: " + prefix);
         newPrefixes.add(prefix);
+    }
+
+    void addSymbol(ParameterizedSymbol symbol) {
+        newSymbols.add(symbol);
     }
     
     boolean complete() {    
@@ -100,7 +109,7 @@ class ObservationTable {
         }
         
         if (!newPrefixes.isEmpty()) {
-        	System.out.println("new prefix: " + newPrefixes.peek());
+        	// System.out.println("new prefix: " + newPrefixes.peek());
             processNewPrefix();
             done = "newPrefix";
             return false;
@@ -110,6 +119,12 @@ class ObservationTable {
             processNewSuffix();
             checkBranchingCompleteness();
             done = "newSuffix";
+            return false;
+        }
+
+        if (!newSymbols.isEmpty()) {
+            processNewSymbols();
+            done = "newSymbol";
             return false;
         }
         
@@ -122,7 +137,7 @@ class ObservationTable {
         	done = "varInconsistency";
         	return false;
         }
-        System.out.println(done);
+        // System.out.println(done);
         
         return true;
     }
@@ -172,9 +187,20 @@ class ObservationTable {
 
     private void processNewComponent() {
         Component c = newComponents.poll();
-        //System.out.println("Adding component to obs: " + c);
+        log.logEvent("Adding component to obs: " + c);
         components.put(c.getAccessSequence(), c);
         c.start(oracle, inputs);
+    }
+
+    private void processNewSymbols() {
+        ParameterizedSymbol symbol = newSymbols.poll();
+        log.logEvent("Adding symbol to obs: " + symbol);
+        addSuffix(new GeneralizedSymbolicSuffix(symbol, teachers));
+        for (Component c: components.values()) {
+            c.start(oracle, symbol);
+        }
+        inputs = Arrays.copyOf(inputs, inputs.length + 1);
+        inputs[inputs.length - 1] = symbol;
     }
 
     Map<Word<PSymbolInstance>, Component> getComponents() {

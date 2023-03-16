@@ -117,7 +117,7 @@ public class SULAnalyzerParser extends SULParser {
 	}
 
     private Pair<Class<?>, String> parseParamConfig(String config) throws ConfigurationException {
-        System.out.println("param config: " + config);
+        // System.out.println("param config: " + config);
         String[] parts = config.trim().split(":");
         Class<?> cl;
         if (parts[0].trim().equals("boolean")) {

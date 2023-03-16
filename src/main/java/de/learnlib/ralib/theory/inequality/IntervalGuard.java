@@ -96,7 +96,7 @@ public class IntervalGuard extends SDTGuard {
         equ(rightOpen) + rightEnd.toString() + ")";
     }
     
-    private String equ(@Nonnull boolean open) {
+    private String equ(boolean open) {
     	return open?"":"=";
     }
 

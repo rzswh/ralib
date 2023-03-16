@@ -17,6 +17,8 @@
 package de.learnlib.ralib.words;
 
 import de.learnlib.ralib.data.DataType;
+
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -25,7 +27,8 @@ import java.util.Arrays;
  * 
  * @author falk
  */
-public abstract class ParameterizedSymbol {
+public abstract class ParameterizedSymbol implements Serializable {
+    static final long serialVersionUID = 1L;
 
     /**
      * name of symbol

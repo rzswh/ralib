@@ -16,6 +16,7 @@
  */
 package de.learnlib.ralib.data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -30,7 +31,8 @@ import java.util.Objects;
  * a DataValue 11 of the same type.
  * @param <T>
  */
-public class DataValue<T> {
+public class DataValue<T> implements Serializable {
+    static final long serialVersionUID = 1L;
     
     protected final DataType type;
 

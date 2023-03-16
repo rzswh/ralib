@@ -26,8 +26,8 @@ public class TreeOracleStatsLoggerWrapper implements TreeOracle{
 		long preResets = counter.getResets();
 		long preInputs = counter.getInputs();
 		TreeQueryResult queryResult = treeOracle.treeQuery(prefix, suffix);
-		System.out.println("Num inputs: " + (counter.getInputs() - preInputs));
-		System.out.println("Num resets: " + (counter.getResets() - preResets));
+		// System.out.println("Num inputs: " + (counter.getInputs() - preInputs));
+		// System.out.println("Num resets: " + (counter.getResets() - preResets));
 		return queryResult;
 	}
 

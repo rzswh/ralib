@@ -17,6 +17,8 @@
 package de.learnlib.ralib.words;
 
 import de.learnlib.ralib.data.DataValue;
+
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -24,7 +26,8 @@ import java.util.Arrays;
  * 
  * @author falk
  */
-public class PSymbolInstance {
+public class PSymbolInstance implements Serializable {
+    static final long serialVersionUID = 1L;
 
     /**
      * action

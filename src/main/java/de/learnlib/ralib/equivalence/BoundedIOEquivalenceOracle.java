@@ -65,7 +65,7 @@ public abstract class BoundedIOEquivalenceOracle implements IOEquivalenceOracle 
 			if (!hypTrace.equals(sulTrace)) {
 				log.log(Level.INFO, "SUL Trace {0}", sulTrace.toString());
 				log.log(Level.INFO, "HYP Trace {0}", hypTrace.toString());
-				System.out.println("HYP Trace " + hypTrace.toString());
+				// System.out.println("HYP Trace " + hypTrace.toString());
 				Word<PSymbolInstance> newSulTrace = target.trace(sulTrace);
 				assert newSulTrace.equals(sulTrace);
 				int j;

@@ -88,6 +88,8 @@ public class TestUtil {
         MultiTheoryTreeOracle mto = new MultiTheoryTreeOracle(
                 ioFilter, ioCache, teachers, consts, solver);
         
+        mto.setPrefixValidationOpt(true);
+
         return mto;
     }
     
@@ -106,6 +108,8 @@ public class TestUtil {
         
         MultiTheoryTreeOracle mto =  new MultiTheoryTreeOracle(
                 ioFilter, ioCache, teachers, consts, solver);
+        
+        mto.setPrefixValidationOpt(true);
         
         return mto;
     }

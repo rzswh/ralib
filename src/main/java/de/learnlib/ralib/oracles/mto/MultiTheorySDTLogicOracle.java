@@ -364,10 +364,10 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
     private GeneralizedSymbolicSuffix counterExampleFromSlice(
             List<SDTGuard> e1Guards, List<SDTGuard> e2Guards, SDT sdt1, SDT sdt2, Word<ParameterizedSymbol> actions) {
         
-        System.out.println("-----------------------------------------------");  
-        System.out.println("Actions: " + actions);
-        System.out.println("Path 1: " + e1Guards);
-        System.out.println("Path 2: " + e2Guards);      
+        // System.out.println("-----------------------------------------------");  
+        // System.out.println("Actions: " + actions);
+        // System.out.println("Path 1: " + e1Guards);
+        // System.out.println("Path 2: " + e2Guards);      
     
         EnumSet<DataRelation>[] prels = new EnumSet[e1Guards.size()];
         EnumSet<DataRelation>[][] srels = new EnumSet[e1Guards.size()][];
@@ -426,7 +426,7 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
         GeneralizedSymbolicSuffix suffix = 
                 new GeneralizedSymbolicSuffix(actions, prels, srels);
         
-        System.out.println("New suffix: " + suffix);
+        // System.out.println("New suffix: " + suffix);
         
         return suffix;
     }
@@ -547,7 +547,7 @@ public class MultiTheorySDTLogicOracle implements SDTLogicOracle {
     	DataValue cst = ((SumCAtomicGuardExpression) atom).getRightConst();
     	if (cst == null)
     		cst = ((SumCAtomicGuardExpression) atom).getLeftConst();
-    	System.out.println(atom + " " + cst + " " + atom);
+    	// System.out.println(atom + " " + cst + " " + atom);
 		int index = consts.getSumCs(cst.getType()).indexOf(cst);
 		return index;
     }

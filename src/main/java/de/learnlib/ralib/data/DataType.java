@@ -16,6 +16,7 @@
  */
 package de.learnlib.ralib.data;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -23,7 +24,8 @@ import java.util.Objects;
  * 
  * @author falk
  */
-public final class DataType {
+public final class DataType implements Serializable {
+    static final long serialVersionUID = 1L;
 
     /**
      * name of type (defining member)

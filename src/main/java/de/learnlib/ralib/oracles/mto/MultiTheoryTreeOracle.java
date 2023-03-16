@@ -85,7 +85,9 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
 
     private final ConstraintSolver solver;
 
-	private IOOracle traceOracle;
+    private IOOracle traceOracle;
+    
+    private boolean prefixValidationOpt = false;
     
     private static LearnLogger log
             = LearnLogger.getLogger(MultiTheoryTreeOracle.class);
@@ -99,6 +101,14 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
         this.teachers = teachers;
         this.constants = constants;
         this.solver = solver;
+    }
+
+    /**
+     * Do not enable this optimization for automata which do not correspond to an IO automata
+     * @param enable
+     */
+    public void setPrefixValidationOpt(boolean enable) {
+        this.prefixValidationOpt = enable;
     }
 
     @Override
@@ -162,6 +172,44 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
             // return accept / reject as a leaf
         }
 
+        if (prefixValidationOpt) {
+            // check the longest concrete prefix which ends with an output symbol
+            int prefixLen = 0;
+            int valLen = 0;
+            for (int i = 0; i < suffix.size(); i++) {
+                int localLen = suffix.getActions().getSymbol(i).getArity();
+                if (valLen + localLen > values.size()) {
+                    break;
+                }
+                valLen += localLen;
+                prefixLen++;
+            }
+            // Only check in presence of a complete symbol.
+            // If there exist extra values that do not fill in a complete suffix symbol, 
+            // its longest concrete prefix has just been tested previously.
+            if (valLen == values.size()) {
+                Word<PSymbolInstance> concSuffixPart = DataWords.instantiate(suffix.getActions().prefix(prefixLen), values);
+                boolean ifInputEnd = (prefix.length() + concSuffixPart.length()) % 2 == 1;
+                if (!ifInputEnd
+                        || (concSuffixPart.length() > 0 && concSuffixPart.lastSymbol().getBaseSymbol().getArity() == 0)) {
+                    DefaultQuery<PSymbolInstance, Boolean> query = new DefaultQuery<>(prefix, concSuffixPart);
+                    // Query whether oracle rejects this prefix earlier
+                    oracle.processQueries(Collections.singleton(query));
+                    if (query.getOutput() == false) {
+                        // construct a REJECT SDT
+                        SDT result = SDTLeaf.REJECTING;
+                        for (int i = DataWords.paramLength(suffix.getActions()); i > values.size(); i--) {
+                            SuffixValue sv = suffix.getDataValue(i);
+                            SuffixValue currentParam = new SuffixValue(sv.getType(), i);
+                            result = new SDT(Collections.singletonMap(new SDTTrueGuard(currentParam), result));
+                        }
+                        log.fine("Early reject concrete prefix " + query.getInput().toString());
+                        log.finest("Early reject result SDT: " + result.toString());
+                        return result;
+                    }
+                }
+            }
+        }
         // OTHERWISE get the first noninstantiated data value in the suffix and its type
         SymbolicDataValue sd = suffix.getDataValue(values.size() + 1);
 

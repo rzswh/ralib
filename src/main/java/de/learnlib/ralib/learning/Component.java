@@ -133,7 +133,7 @@ class Component {
 
         if (ioMode && suffix.getActions().length() > 0 && 
                 getAccessSequence().length() > 0 && !isAccepting()) {
-            log.log(Level.INFO, "Not adding suffix " + suffix + " to error component " + getAccessSequence());
+            // log.log(Level.INFO, "Not adding suffix " + suffix + " to error component " + getAccessSequence());
             return;
         }
         
@@ -263,15 +263,15 @@ class Component {
                 new GeneralizedSymbolicSuffix(r.getPrefix(), c.getSuffix(),
             			consts, teachers);
                 
-                System.out.println("Long Prefix:" + r.getPrefix());
-                System.out.println("Original Suffix:" + c.getSuffix().getActions());                
-                System.out.println(prefixGuard);                
-                System.out.println(pivU);                
-                System.out.println(pivUA);
-                System.out.println(c.getPrefix());
-                System.out.println(c.getParsInVars() + " " + c.getSDT());                
-//                System.out.println(slice);
-                System.out.println(newSuffix);
+                // System.out.println("Long Prefix:" + r.getPrefix());
+                // System.out.println("Original Suffix:" + c.getSuffix().getActions());                
+                // System.out.println(prefixGuard);                
+                // System.out.println(pivU);                
+                // System.out.println(pivUA);
+                // System.out.println(c.getPrefix());
+                // System.out.println(c.getParsInVars() + " " + c.getSDT());                
+                // System.out.println(slice);
+                // System.out.println(newSuffix);
                 
                 //if (true) throw new IllegalStateException("untested");
                 

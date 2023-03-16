@@ -18,6 +18,7 @@ package de.learnlib.ralib.learning;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 
 import de.learnlib.logging.LearnLogger;
@@ -108,13 +109,17 @@ public class CounterexampleAnalysis {
         this.solver = solver;
     }
     
-    CEAnalysisResult analyzeCounterexample(Word<PSymbolInstance> ce) {
+    Optional<CEAnalysisResult> analyzeCounterexample(Word<PSymbolInstance> ce) {
         IndexResult result  = linearBackWardsSearch(ce);
+
+        if (result.idx < 0) {
+            return Optional.empty();
+        }
         
         Word<PSymbolInstance> prefix = ce.prefix(result.idx);
         Word<PSymbolInstance> suffix = ce.suffix(ce.length() - result.idx);
         if (result.getSuffix() != null) {
-        	return new CEAnalysisResult(prefix, result.getSuffix());
+        	return Optional.of(new CEAnalysisResult(prefix, result.getSuffix()));
         }
         
         GeneralizedSymbolicSuffix symSuffix = 
@@ -123,14 +128,14 @@ public class CounterexampleAnalysis {
 
         assert ce.length() - result.idx == symSuffix.getActions().length();     
         
-        return new CEAnalysisResult(prefix, symSuffix);
+        return Optional.of(new CEAnalysisResult(prefix, symSuffix));
     } 
 
     
     private IndexResult computeIndex(Word<PSymbolInstance> ce, int idx) {
         
         Word<PSymbolInstance> prefix = ce.prefix(idx);
-        System.out.println(idx + "  " + prefix);        
+        // System.out.println(idx + "  " + prefix);        
         Word<PSymbolInstance> location = hypothesis.transformAccessSequence(prefix);
         Word<PSymbolInstance> transition = hypothesis.transformTransitionSequence(
             ce.prefix(idx+1)); 
@@ -142,17 +147,17 @@ public class CounterexampleAnalysis {
         SliceBuilder sb = new SliceBuilder(teachers, consts, solver);
         
         Slice slice = sb.sliceFromWord(prefix, suffix);
-        System.out.println("Slice from word: " + slice);
+        // System.out.println("Slice from word: " + slice);
         
         GeneralizedSymbolicSuffix symSuffix = SymbolicSuffixBuilder.suffixFromSlice(DataWords.actsOf(suffix), slice);
         
-        System.out.println("exhaustive suffix: " + symSuffix);
-        System.out.println("location: " + location);
+        // System.out.println("exhaustive suffix: " + symSuffix);
+        // System.out.println("location: " + location);
         TreeQueryResult resHyp = hypOracle.treeQuery(location, symSuffix);
         TreeQueryResult resSul = sulOracle.treeQuery(location, symSuffix);
         
-        System.out.println("HYP (initial suffix): " + resHyp);
-        System.out.println("SUL (initial suffix): " + resSul);
+        // System.out.println("HYP (initial suffix): " + resHyp);
+        // System.out.println("SUL (initial suffix): " + resSul);
                 
         log.log(Level.FINE,"------------------------------------------------------");
         log.log(Level.FINE,"Computing index: " + idx);
@@ -174,7 +179,7 @@ public class CounterexampleAnalysis {
                 resHyp.getSdt(), resHyp.getPiv(), //new PIV(location, resHyp.getParsInVars()), 
                 resSul.getSdt(), resSul.getPiv(), //new PIV(location, resSul.getParsInVars()), 
                 g, transition);
-        System.out.println("hasCE: " + hasCE);
+        // System.out.println("hasCE: " + hasCE);
         if (!hasCE) {
             return new IndexResult(idx, IndexStatus.NO_CE, null);
         }
@@ -189,7 +194,7 @@ public class CounterexampleAnalysis {
                 IndexStatus.HAS_CE_AND_REFINES : IndexStatus.HAS_CE_NO_REFINE,
                 slice);
         indx.setSuffix(symSuffix);
-        System.out.println("CE Status: " + indx.status.name());
+        // System.out.println("CE Status: " + indx.status.name());
         return indx;
     }
     
@@ -200,10 +205,10 @@ public class CounterexampleAnalysis {
         Component c = components.get(prefix);
         Branching branchHyp = c.getBranching(action);
         
-        System.out.println("Hyp Branching:");
-        System.out.println(Arrays.toString(branchHyp.getBranches().values().toArray()));
-        System.out.println("Sul Branching:");
-        System.out.println(Arrays.toString(branchSul.getBranches().values().toArray()));
+        // System.out.println("Hyp Branching:");
+        // System.out.println(Arrays.toString(branchHyp.getBranches().values().toArray()));
+        // System.out.println("Sul Branching:");
+        // System.out.println(Arrays.toString(branchSul.getBranches().values().toArray()));
         
         for (TransitionGuard guardSul : branchSul.getBranches().values()) {
             boolean refines = false;
@@ -242,7 +247,11 @@ public class CounterexampleAnalysis {
             idx--;
         }
         
-        assert (idx >= 0);
+        // Acutally not counterexample? 
+        // Possible when oracle returns a result varying from time to time
+        if (idx < 0) {
+            return new IndexResult(-1, IndexStatus.NO_CE, null);
+        }
         
         // if in the last step there was no counterexample, 
         // we have to move one step to the left
@@ -257,7 +266,7 @@ public class CounterexampleAnalysis {
         	if (results[idx+1].status == IndexStatus.NO_CE) {
                 int arity = ce.getSymbol(idx).getBaseSymbol().getArity();
                 Slice s = results[idx].slice.suffix(arity);
-                System.out.println("Suffix slice: " + s);
+                // System.out.println("Suffix slice: " + s);
                 IndexResult old = results[idx+1];
                 results[idx+1] = new IndexResult(old.idx, old.status, s);
             }
@@ -314,7 +323,7 @@ public class CounterexampleAnalysis {
             if (results[idx+1].status == IndexStatus.NO_CE) {
                 int arity = ce.getSymbol(idx).getBaseSymbol().getArity();
                 Slice s = results[idx].slice.suffix(arity);
-                System.out.println("Suffix slice: " + s);                
+                // System.out.println("Suffix slice: " + s);                
                 IndexResult old = results[idx+1];
                 results[idx+1] = new IndexResult(old.idx, old.status, s);
             }

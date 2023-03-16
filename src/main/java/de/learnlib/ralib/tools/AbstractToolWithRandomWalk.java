@@ -225,7 +225,7 @@ public abstract class AbstractToolWithRandomWalk implements RaLibTool {
 		if (config.containsKey(OPTION_RANDOM_SEED.getKey())) {
 			seed = OPTION_RANDOM_SEED.parse(config);
 		}
-		System.out.println("RANDOM SEED=" + seed);
+		// System.out.println("RANDOM SEED=" + seed);
 		this.random = new Random(seed);
 		config.setProperty("__seed", "" + seed);
 
@@ -350,10 +350,10 @@ public abstract class AbstractToolWithRandomWalk implements RaLibTool {
 				if (excludedTraces != null) {
 					List<Word<PSymbolInstance>> traces = getCanonizedWordsFromString(excludedTraces, alphabet, teachers,
 							consts);
-					System.out.println("Cache Size: " + ioCache.getSize());
+					// System.out.println("Cache Size: " + ioCache.getSize());
 					for (Word<PSymbolInstance> trace : traces) {
 						ioCache = ioCache.getCacheExcluding(trace);
-						System.out.println("Cache Size After Excluding " + trace + " : " + ioCache.getSize());
+						// System.out.println("Cache Size After Excluding " + trace + " : " + ioCache.getSize());
 					}
 
 				}

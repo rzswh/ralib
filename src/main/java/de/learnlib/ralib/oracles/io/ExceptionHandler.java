@@ -21,12 +21,12 @@ public interface ExceptionHandler {
 				O result = fun.get();
 				return result;
 			} catch(NonDeterminismException exc) {
-				System.out.println("Non determinism:" + exc);
+				// System.out.println("Non determinism:" + exc);
 				nonDet ++;
 				lastExc = exc;
 			} catch(SULRestartException exc) {
 				sulRest ++;
-				System.out.println("SUL issued restart");
+				// System.out.println("SUL issued restart");
 				lastExc = exc;
 			}
 		}

@@ -93,10 +93,13 @@ public class BasicIOCacheOracle extends QueryCounter implements DataWordIOOracle
         while (iter.hasNext()) {
 
             PSymbolInstance in = iter.next();
-            if (!iter.hasNext()) {
+
+            // swh: Do not ignore dangling input symbol at the end of the query
+            // Otherwise the query will never be processed to discover new output base symbol
+            // if (!iter.hasNext()) {
                 // only input is left ...
-                return Boolean.TRUE;
-            }
+                // return Boolean.TRUE;
+            // }
 
             DataValue[] dvInRepl = new DataValue[in.getBaseSymbol().getArity()];
             for (int i = 0; i < dvInRepl.length; i++) {
@@ -111,14 +114,18 @@ public class BasicIOCacheOracle extends QueryCounter implements DataWordIOOracle
 
             in = new PSymbolInstance(in.getBaseSymbol(), dvInRepl);
 
-            PSymbolInstance ref = iter.next();
-
             out = cur.output.get(in);
-            cur = cur.next.get(in);
-
             if (out == null) {
                 return null;
             }
+
+            if (!iter.hasNext()) {
+                return Boolean.TRUE;
+            }
+
+            PSymbolInstance ref = iter.next();
+
+            cur = cur.next.get(in);
 
             if (!out.getBaseSymbol().equals(ref.getBaseSymbol())) {
                 return Boolean.FALSE;

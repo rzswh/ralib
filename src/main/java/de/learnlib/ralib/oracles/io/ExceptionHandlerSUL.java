@@ -46,7 +46,7 @@ public class ExceptionHandlerSUL extends DataWordSUL implements ExceptionHandler
 				lastExc = exc;
 			} catch(SULRestartException exc) {
 				sulRest ++;
-				System.out.println("SUL issued restart");
+				// System.out.println("SUL issued restart");
 				lastExc = exc;
 			}
 		}

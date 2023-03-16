@@ -94,16 +94,16 @@ public class IOCounterExampleRelationRemover implements IOCounterExampleOptimize
 
             instMap.put(i, fresh);           
             Word<PSymbolInstance> cand = DataWords.instantiate(DataWords.actsOf(ce), instMap);
-            System.out.println(cand);            
+            // System.out.println(cand);            
             Word<PSymbolInstance> candidate = sulOracle.trace(cand);
             
-            System.out.println("---");
-            System.out.println("CE " + builder.sliceFromWord(Word.epsilon(), ce));
-            System.out.println("CA " + builder.sliceFromWord(Word.epsilon(), candidate));
+            // System.out.println("---");
+            // System.out.println("CE " + builder.sliceFromWord(Word.epsilon(), ce));
+            // System.out.println("CA " + builder.sliceFromWord(Word.epsilon(), candidate));
             
             if (builder.sliceFromWord(Word.epsilon(), ce).equals(
                     builder.sliceFromWord(Word.epsilon(), candidate))) {
-                System.out.println("eq");
+                // System.out.println("eq");
                 continue;
             }
             

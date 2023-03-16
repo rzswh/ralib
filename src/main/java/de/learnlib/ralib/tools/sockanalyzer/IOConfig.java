@@ -69,7 +69,7 @@ public class IOConfig {
 
     
     private Pair<Class<?>, String> parseParamConfig(String config) throws ClassNotFoundException {
-        System.out.println("param config: " + config);
+        // System.out.println("param config: " + config);
         String[] parts = config.trim().split(":");
         Class<?> cl;
         if (parts[0].trim().equals("boolean")) {

@@ -160,8 +160,8 @@ public class SliceBuilder {
 
         Slice slice = new Slice();
 
-        System.out.println(p1);
-        System.out.println(p2);
+        // System.out.println(p1);
+        // System.out.println(p2);
         
         
         for (AtomicGuardExpression a : p1.getAtoms()) {
@@ -218,9 +218,9 @@ public class SliceBuilder {
         //paths.addAll(_sdt.getPathsAsExpressions(constants, true));
         //paths.addAll(_sdt.getPathsAsExpressions(constants, false));
         
-        System.out.println("-----------------------------");
-        System.out.println(pivUA.get(p));
-        System.out.println(sdt);
+        // System.out.println("-----------------------------");
+        // System.out.println(pivUA.get(p));
+        // System.out.println(sdt);
                 
         for (Conjunction c : paths) {
             Slice cur = sliceFromTransitionAndPath(ua, guard, p, pivU, pivUA, c);
@@ -242,10 +242,10 @@ public class SliceBuilder {
             Word<PSymbolInstance> ua, TransitionGuard guard,
             Parameter p, PIV pivU, PIV pivUA, Conjunction path) {
 
-        System.out.println(path);
-        System.out.println(guard);
-        System.out.println("PIVUA:" + pivUA);
-        System.out.println("PIVU:" + pivU);
+        // System.out.println(path);
+        // System.out.println(guard);
+        // System.out.println("PIVUA:" + pivUA);
+        // System.out.println("PIVU:" + pivU);
         
         Register reg = pivUA.get(p);
         if (!path.getSymbolicDataValues().contains(reg)) {
@@ -336,7 +336,7 @@ public class SliceBuilder {
             }
         }
         
-        System.out.println(slice);
+        // System.out.println(slice);
 
         return slice;
     }
@@ -368,7 +368,7 @@ public class SliceBuilder {
         GeneralizedSymbolicSuffix suffix = 
                 SymbolicSuffixBuilder.suffixFromSlice(actions, slice);
         
-        System.out.println("RANK " + suffix.rank() + " FOR " + suffix);       
+        // System.out.println("RANK " + suffix.rank() + " FOR " + suffix);       
         return suffix.rank();
     }
 

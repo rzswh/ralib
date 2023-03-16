@@ -91,8 +91,8 @@ public class ContinuousDomainInequalityMerger implements InequalityGuardMerger{
 				SDTGuard[] deq = eqDeqMergedResult.keySet().stream()
 					.map(eq -> ((EqualityGuard) eq).toDeqGuard())
 					.toArray(SDTGuard []::new);
-				if (deq.length == 0)
-					System.out.println(mergedResult);
+				// if (deq.length == 0)
+				// 	System.out.println(mergedResult);
 				
 				if (deq.length > 1)
 					elseGuard = new SDTAndGuard(head.getParameter(), deq);

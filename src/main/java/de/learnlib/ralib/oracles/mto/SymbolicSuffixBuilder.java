@@ -37,7 +37,7 @@ public class SymbolicSuffixBuilder {
 
 	public static GeneralizedSymbolicSuffix suffixFromSlice(Word<ParameterizedSymbol> actions, Slice slice) {
 
-		System.out.println("Suffix from slice: " + slice);
+		// System.out.println("Suffix from slice: " + slice);
 
 		EnumSet<DataRelation>[] prefixRelations = new EnumSet[DataWords.paramLength(actions)];
 		EnumSet<DataRelation>[][] suffixRelations = new EnumSet[DataWords.paramLength(actions)][];
@@ -68,7 +68,7 @@ public class SymbolicSuffixBuilder {
 
 		GeneralizedSymbolicSuffix suffix = new GeneralizedSymbolicSuffix(actions, prefixRelations, suffixRelations);
 
-		System.out.println("Suffix: " + suffix);
+		// System.out.println("Suffix: " + suffix);
 		return suffix;
 	}
 
@@ -105,9 +105,9 @@ public class SymbolicSuffixBuilder {
 	public static GeneralizedSymbolicSuffix suffixFromSliceRetainBranching(Word<ParameterizedSymbol> acts, Slice slice,
 			SDT sdt) {
 
-		System.out.println("Acts:" + acts);
-		System.out.println("Slice:" + slice);
-		System.out.println("Sdt:" + sdt);
+		// System.out.println("Acts:" + acts);
+		// System.out.println("Slice:" + slice);
+		// System.out.println("Sdt:" + sdt);
 
 		throw new UnsupportedOperationException("Not supported yet."); // To
 																		// change

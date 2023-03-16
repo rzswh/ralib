@@ -19,6 +19,7 @@ package de.learnlib.ralib.learning;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Optional;
 
 import de.learnlib.logging.LearnLogger;
 import de.learnlib.oracles.DefaultQuery;
@@ -139,13 +140,16 @@ public class RaStar {
             hyp = ab.toRegisterAutomaton();
             
             //FIXME: the default logging appender cannot log models and data structures
-            System.out.println("New Hyp: \n" + hyp.toString());
-            log.logModel(hyp);
+            // System.out.println("New Hyp: \n" + hyp.toString());
+            // log.logModel(hyp);
             
         } while (analyzeCounterExample());
          
     }
     
+    public void addSymbol(ParameterizedSymbol symbol) {
+        this.obs.addSymbol(symbol);
+    }
     
     public void addCounterexample(DefaultQuery<PSymbolInstance, Boolean> ce) {
         log.logEvent("adding counterexample: " + ce);
@@ -173,11 +177,16 @@ public class RaStar {
             return false;
         }
         
-        //System.out.println("CE ANALYSIS: " + ce + " ; S:" + sulce + " ; H:" + hypce);
+        // System.out.println("CE ANALYSIS: " + hyp);
         
-        CEAnalysisResult res = analysis.analyzeCounterexample(ce.getInput());
-        obs.addSuffix(res.getSuffix());
-        return true;
+        Optional<CEAnalysisResult> res = analysis.analyzeCounterexample(ce.getInput());
+        if (res.isPresent()) {
+            obs.addSuffix(res.get().getSuffix());
+            return true;
+        }
+        log.logEvent("word is not a counterexample: " + ce);
+        counterexamples.poll();
+        return false;
     }
             
     

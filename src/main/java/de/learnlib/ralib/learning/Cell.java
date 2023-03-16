@@ -114,12 +114,12 @@ final class Cell {
     	try {
 
     	     //   if (tqr.getPiv().size() >2) {
-    	        System.out.println("START: computecell for " + prefix.toString() + "   .    " + suffix.toString());
+    	        // System.out.println("START: computecell for " + prefix.toString() + "   .    " + suffix.toString());
 
         TreeQueryResult tqr = oracle.treeQuery(prefix, suffix);
         Cell c = new Cell(prefix, suffix, tqr.getSdt(), tqr.getPiv());
         
-         System.out.println("END: computecell " + c.toString());
+        //  System.out.println("END: computecell " + c.toString());
         // log.log(Level.FINE, "computeCell ...... {0}", c);
         // System.out.println(c);
         // assert tqr.getPiv().size() <= 2;
