@@ -45,14 +45,24 @@ public class IntegerEqualityTheory  extends EqualityTheory<Integer> implements T
         this.type = t;
     }
 
+    // Modify: dflasher
+    // Allocate minimal possible value at the cost of allocating a small hash table
     @Override
     public DataValue<Integer> getFreshValue(List<DataValue<Integer>> vals) {
-        int dv = -1;
+        boolean slots[] = new boolean[vals.size()];
         for (DataValue<Integer> d : vals) {
-            dv = Math.max(dv, d.getId());
+            // dv = Math.max(dv, d.getId());
+            if (d.getId() >= 0 && d.getId() < slots.length) {
+                slots[d.getId()] = true;
+            }
+        }
+        for (int i = 0; i < slots.length; i++) {
+            if (!slots[i]) {
+                return new DataValue<>(type, i);
+            }
         }
 
-        return new DataValue<>(type, dv + 1);
+        return new DataValue<>(type, slots.length);
     }
     
     public void setType(DataType type) {
