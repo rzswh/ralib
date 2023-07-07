@@ -19,6 +19,7 @@ package de.learnlib.ralib.automata;
 import de.learnlib.ralib.words.ParameterizedSymbol;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class RALocation {
     }
 
     public Collection<Transition> getOut(ParameterizedSymbol ps) {
-        return out.get(ps);
+        return out.getOrDefault(ps, Collections.emptyList());
     }
 
     public Collection<Transition> getOut() {

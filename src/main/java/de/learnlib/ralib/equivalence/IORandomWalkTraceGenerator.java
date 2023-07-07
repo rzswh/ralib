@@ -68,7 +68,15 @@ public class IORandomWalkTraceGenerator implements TraceGenerator{
 			depth++;
 			out = null;
 			trace = trace.append(next);
-			out = target.step(next);
+			try {
+				out = target.step(next);
+			} catch (IllegalStateException e) {
+				if (error != null) {
+					out = new PSymbolInstance(error);
+				} else {
+					throw e;
+				}
+			}
 			trace = trace.append(out);
 
 		} while (rand.nextDouble() > stopProbability && depth < maxDepth && !out.getBaseSymbol().equals(error));

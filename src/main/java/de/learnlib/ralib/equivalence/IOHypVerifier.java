@@ -37,8 +37,13 @@ public class IOHypVerifier implements HypVerifier {
 			try {
 				for(i=1; i< sulTrace.length(); i = i+2) {
 					PSymbolInstance input = sulTrace.getSymbol(i-1);
-					PSymbolInstance output = hypSim.step(input);
-					if (!output.equals(sulTrace.getSymbol(i))) {
+					try {
+						PSymbolInstance output = hypSim.step(input);
+						if (!output.equals(sulTrace.getSymbol(i))) {
+							hypSim.post();
+							return true;
+						}
+					} catch (IllegalStateException e) {
 						hypSim.post();
 						return true;
 					}
