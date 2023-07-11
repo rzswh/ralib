@@ -92,9 +92,9 @@ public class RaStar {
   
         //TODO: make this optional
         for (ParameterizedSymbol ps : inputs) {
-            if (ps instanceof OutputSymbol) {
+            // if (ps instanceof OutputSymbol) {
                 this.obs.addSuffix(new GeneralizedSymbolicSuffix(ps, teachers));
-            }
+            // }
         }
         
         this.sulOracle = oracle;
