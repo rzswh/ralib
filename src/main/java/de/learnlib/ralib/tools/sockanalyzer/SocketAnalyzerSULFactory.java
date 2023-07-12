@@ -8,7 +8,6 @@ import java.util.Map;
 import de.learnlib.ralib.sul.DataWordSUL;
 import de.learnlib.ralib.tools.SULFactory;
 import de.learnlib.ralib.words.ParameterizedSymbol;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class SocketAnalyzerSULFactory implements SULFactory{
 	private SocketWrapper sock;
@@ -35,8 +34,8 @@ public class SocketAnalyzerSULFactory implements SULFactory{
 		return false;
 	}
 
-	public DataWordSUL[] newIndependentSULs(int numInstances) {
-		throw new NotImplementedException();
+	public DataWordSUL[] newIndependentSULs(int numInstances) throws Exception {
+		throw new Exception();
 	}
 
 }

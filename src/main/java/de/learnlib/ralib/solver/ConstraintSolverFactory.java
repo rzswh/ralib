@@ -17,7 +17,6 @@
 
 package de.learnlib.ralib.solver;
 
-import de.learnlib.ralib.solver.jconstraints.JConstraintsConstraintSolver;
 import de.learnlib.ralib.solver.simple.SimpleConstraintSolver;
 
 /**
@@ -29,6 +28,10 @@ public class ConstraintSolverFactory {
     public final static String ID_SIMPLE = "simple";
 
     public final static String ID_Z3 = "z3";
+
+    public ConstraintSolverFactory(){
+        // Do nothing
+    }
     
     
     public static ConstraintSolver createSolver(final String id) {
@@ -36,7 +39,7 @@ public class ConstraintSolverFactory {
             case ID_SIMPLE:
                 return createSimpleConstraintSolver();
             case ID_Z3:
-                return createZ3ConstraintSolver();
+                return (ConstraintSolver) createZ3ConstraintSolver();
             default:
                 throw new RuntimeException("Unsupported constraint solver: " + id);
         }
@@ -46,11 +49,9 @@ public class ConstraintSolverFactory {
         return new SimpleConstraintSolver();
     }
     
-    public static JConstraintsConstraintSolver createZ3ConstraintSolver() {
-        gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory fact = 
-                new gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory();
+    public static ConstraintSolver createZ3ConstraintSolver() {
         
-        return new JConstraintsConstraintSolver(fact.createSolver("z3"));      
+        return (ConstraintSolver) gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory.createSolver("z3");      
     }
     
 }

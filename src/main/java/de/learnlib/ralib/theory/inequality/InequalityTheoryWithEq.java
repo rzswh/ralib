@@ -99,8 +99,7 @@ public abstract class InequalityTheoryWithEq<T extends Comparable<T>> implements
 	protected static <P extends Comparable<P>> JConstraintsGuardInstantiator<P> getInstantiator(DataType type,
 			String solverName,
 			Class<P> domainType) {
-		gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory fact = new gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory();
-		gov.nasa.jpf.constraints.api.ConstraintSolver solver = fact.createSolver(solverName);
+		gov.nasa.jpf.constraints.api.ConstraintSolver solver = gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory.createSolver(solverName);
 		return new JConstraintsGuardInstantiator<P>(type, solver, domainType);
 	}
 
