@@ -200,7 +200,8 @@ public class JContraintsUtil {
     }
     
     public static Constant toConstant(DataValue v) {
-        return new Constant( getJCType(v), v.getId());
+        Type type = getJCType(v);
+        return new Constant( type, type.cast(v.getId()));
     }
 
     public static Variable toVariable(SymbolicDataValue dv) {

@@ -17,6 +17,8 @@
 
 package de.learnlib.ralib.solver;
 
+import de.learnlib.ralib.automata.guards.GuardExpression;
+import de.learnlib.ralib.solver.jconstraints.JConstraintsConstraintSolver;
 import de.learnlib.ralib.solver.simple.SimpleConstraintSolver;
 
 /**
@@ -50,8 +52,9 @@ public class ConstraintSolverFactory {
     }
     
     public static ConstraintSolver createZ3ConstraintSolver() {
+        gov.nasa.jpf.constraints.api.ConstraintSolver innerSolver = gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory.createSolver("z3");
         
-        return (ConstraintSolver) gov.nasa.jpf.constraints.solvers.ConstraintSolverFactory.createSolver("z3");      
+        return new JConstraintsConstraintSolver(innerSolver) ;
     }
     
 }
