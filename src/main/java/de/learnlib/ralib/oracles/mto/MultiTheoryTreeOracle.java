@@ -203,8 +203,8 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
                             SuffixValue currentParam = new SuffixValue(sv.getType(), i);
                             result = new SDT(Collections.singletonMap(new SDTTrueGuard(currentParam), result));
                         }
-                        log.fine("Early reject concrete prefix " + query.getInput().toString());
-                        log.finest("Early reject result SDT: " + result.toString());
+                        // log.fine("Early reject concrete prefix " + query.getInput().toString());
+                        // log.finest("Early reject result SDT: " + result.toString());
                         return result;
                     }
                 }
@@ -231,7 +231,7 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
     public Branching getInitialBranching(Word<PSymbolInstance> prefix,
             ParameterizedSymbol ps, PIV piv, SymbolicDecisionTree... sdts) {
 
-        log.log(Level.INFO,
+        log.log(Level.FINE,
                 "computing initial branching for {0} after {1}",
                 new Object[]{ps, prefix});
 
@@ -251,7 +251,7 @@ public class MultiTheoryTreeOracle implements TreeOracle, SDTConstructor {
                 prefix, ps, piv, new ParValuation(),
                 new ArrayList<SDTGuard>(), casted);
 
-        log.log(Level.FINEST, mtb.toString());
+        // log.log(Level.FINEST, mtb.toString());
 
         return mtb;
     }

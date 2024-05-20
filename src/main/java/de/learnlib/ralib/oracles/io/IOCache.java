@@ -144,19 +144,20 @@ public class IOCache {
 		while (iter.hasNext()) {
 
 			PSymbolInstance in = iter.next();
+			out = cur.output.get(in);
+
+			if (out == null) {
+				return null;
+			}
+
 			if (!iter.hasNext()) {
 				// only input is left ...
 				return Boolean.TRUE;
 			}
 
-			PSymbolInstance ref = iter.next();
-
-			out = cur.output.get(in);
 			cur = cur.next.get(in);
 
-			if (out == null) {
-				return null;
-			}
+			PSymbolInstance ref = iter.next();
 
 			if (!out.equals(ref)) {
 				return Boolean.FALSE;

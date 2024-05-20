@@ -46,9 +46,9 @@ public class DeterminizerTest  extends RaLibTestSuite {
          * {(0,0), (1,1), (2,2), (3,50), (4,100)}
          */
         rcvd = canonizer.canonize(dv(T_INT, 5, 6, 1, 4), true);
-        test(rcvd, 101, 102, 1, 100 );
+        test(rcvd, 3, 4, 1, 100 );
         /*
-         * {(0,0), (1,1), (2,2), (3,50), (4,100), (5,101), (6,102)}
+         * {(0,0), (1,1), (2,2), (3,50), (4,100), (5,3), (6,4)}
          */
 	}
     

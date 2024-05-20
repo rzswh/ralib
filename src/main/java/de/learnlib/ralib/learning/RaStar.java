@@ -197,5 +197,9 @@ public class RaStar {
         }
         return ab.toRegisterAutomaton();   
     }
+
+    public void setHypVerifier(HypVerifier hypVerifier) {
+        this.hypVerifier = hypVerifier;
+    }
     
 }

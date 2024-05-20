@@ -191,8 +191,8 @@ class Component {
         
 //        System.out.println("OLD BRANCHING: " + b);
 //        System.out.println("NEW BRANCHING: " + newB);
-        log.log(Level.FINEST,"OLD: " + Arrays.toString(b.getBranches().keySet().toArray()));
-        log.log(Level.FINEST,"NEW: " + Arrays.toString(newB.getBranches().keySet().toArray()));
+        // log.log(Level.FINEST,"OLD: " + Arrays.toString(b.getBranches().keySet().toArray()));
+        // log.log(Level.FINEST,"NEW: " + Arrays.toString(newB.getBranches().keySet().toArray()));
         
         for (Word<PSymbolInstance> prefix : newB.getBranches().keySet()) {
             if (!b.getBranches().containsKey(prefix)) {
@@ -224,10 +224,10 @@ class Component {
             
         Word<PSymbolInstance> prefix = r.getPrefix().prefix(r.getPrefix().length() -1);        
         Component prefixComponent = obs.getComponents().get(prefix);        
-        Branching prefixBranching = prefixComponent.getBranching(
-                r.getPrefix().lastSymbol().getBaseSymbol());
+        // Branching prefixBranching = prefixComponent.getBranching(
+        //         r.getPrefix().lastSymbol().getBaseSymbol());
         
-        TransitionGuard prefixGuard = prefixBranching.getBranches().get(r.getPrefix());
+        // TransitionGuard prefixGuard = prefixBranching.getBranches().get(r.getPrefix());
         PIV pivU = prefixComponent.primeRow.getParsInVars();
         PIV pivUA = r.getParsInVars();
         

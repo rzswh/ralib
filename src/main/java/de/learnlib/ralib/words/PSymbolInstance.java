@@ -39,6 +39,10 @@ public class PSymbolInstance implements Serializable {
      */
     private final DataValue[] parameterValues;
 
+    // caches
+    private String name = null;
+    private Integer hashCode = null;
+
     public PSymbolInstance(ParameterizedSymbol baseSymbol, 
             DataValue ... parameterValues) {
         this.baseSymbol = baseSymbol;
@@ -55,7 +59,10 @@ public class PSymbolInstance implements Serializable {
 
     @Override
     public String toString() {
-        return this.baseSymbol.getName() + Arrays.toString(parameterValues);
+        if (this.name == null) {
+            this.name = this.baseSymbol.getName() + Arrays.toString(parameterValues);
+        }
+        return this.name;
     }
 
     @Override
@@ -75,10 +82,13 @@ public class PSymbolInstance implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 11 * hash + (this.baseSymbol != null ? this.baseSymbol.hashCode() : 0);
-        hash = 11 * hash + Arrays.deepHashCode(this.parameterValues);
-        return hash;
+        if (this.hashCode == null) {
+            int hash = 5;
+            hash = 11 * hash + (this.baseSymbol != null ? this.baseSymbol.hashCode() : 0);
+            hash = 11 * hash + Arrays.deepHashCode(this.parameterValues);
+            this.hashCode = hash;
+        }
+        return this.hashCode;
     }
     
     

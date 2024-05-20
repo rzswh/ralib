@@ -64,6 +64,9 @@ public class IORandomWalkTraceGenerator implements TraceGenerator{
 		PSymbolInstance out;
 		do {
 			PSymbolInstance next = this.inpSelector.nextInput(trace, hyp);
+			if (next == null) {
+				break;
+			}
 			assert next!=null;
 			depth++;
 			out = null;

@@ -301,5 +301,9 @@ public class MutableRegisterAutomaton extends RegisterAutomaton
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 
+    public Constants getConstants() {
+        return constants;
+    }
+
 
 }
