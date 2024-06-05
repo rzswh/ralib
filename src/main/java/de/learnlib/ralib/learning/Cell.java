@@ -164,4 +164,8 @@ final class Cell {
         return this.sdt.isAccepting();
     }
 
+    boolean anyAccepting() {
+        return this.sdt.anyAccepting();
+    }
+
 }

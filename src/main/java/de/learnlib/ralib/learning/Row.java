@@ -48,6 +48,8 @@ class Row {
 
     private final Map<GeneralizedSymbolicSuffix, Cell> cells;
 
+    private final List<Cell> rejectingCells;
+
     private final PIV memorable = new PIV();
 
     private final RegisterGenerator regGen = new RegisterGenerator();
@@ -59,6 +61,7 @@ class Row {
     private Row(Word<PSymbolInstance> prefix, boolean ioMode) {
         this.prefix = prefix;
         this.cells = new LinkedHashMap<>();
+        this.rejectingCells = new ArrayList<>();
         this.ioMode = ioMode;
     }
 
@@ -66,7 +69,10 @@ class Row {
         this(prefix, ioMode);
 
         for (Cell c : cells) {
-            this.cells.put(c.getSuffix(), c);
+            if (c.getSDT().anyAccepting() || c.getSuffix().size() == 0)
+                this.cells.put(c.getSuffix(), c);
+            else 
+                this.rejectingCells.add(c);
         }
     }
 
@@ -93,7 +99,8 @@ class Row {
     private void addCell(Cell c) {
 
         assert c.getPrefix().equals(this.prefix);
-        if (this.cells.containsKey(c.getSuffix())) {
+        if (this.cells.containsKey(c.getSuffix()) 
+                || this.rejectingCells.stream().anyMatch(x -> c.getSuffix().equals(x.getSuffix()))) {
         	throw new DecoratedRuntimeException("There already is a cell for suffix. ").
         	addDecoration("Cell to be added", c).addDecoration("Cell already present", this.cells.get(c.getSuffix())).
         	addDecoration("Suffix: ", c.getSuffix());
@@ -112,13 +119,24 @@ class Row {
             relabelling.put(e.getValue(), r);
         }
 
-        this.cells.put(c.getSuffix(), c.relabel(relabelling));
+        // swh: leave non-accepting cells null?
+        if (!c.anyAccepting() && c.getSuffix().size() != 0) {
+            this.rejectingCells.add(c);
+        } else {
+            this.cells.put(c.getSuffix(), c.relabel(relabelling));
+        }
     }
 
     Cell getCellForMemorable(Parameter p) {
         for (Entry<GeneralizedSymbolicSuffix, Cell> c : cells.entrySet()) {
             if (c.getValue().getParsInVars().containsKey(p)) {
                 return c.getValue();
+            }
+        }
+
+        for (Cell c : rejectingCells) {
+            if (c.getParsInVars().containsKey(p)) {
+                return c;
             }
         }
 
@@ -132,6 +150,12 @@ class Row {
             if (acts.length() > 0 && acts.firstSymbol().equals(ps)) {
 //                System.out.println("Using " + c.getKey() + " for branching of " + ps + " after " + prefix);
                 sdts.add(c.getValue().getSDT());
+            }
+        }
+        for (Cell c : this.rejectingCells) {
+            Word<ParameterizedSymbol> acts = c.getSuffix().getActions();
+            if (acts.length() > 0 && acts.firstSymbol().equals(ps)) {
+                sdts.add(c.getSDT());
             }
         }
         return sdts.toArray(new SymbolicDecisionTree[]{});
@@ -170,10 +194,10 @@ class Row {
                 if (c1 == null && c2 == null) {
                     continue;
                 }
+            }
 
-                if (c1 == null || c2 == null) {
-                    return false;
-                }
+            if (c1 == null || c2 == null) {
+                return false;
             }
 
             if (!c1.isEquivalentTo(c2, renaming, solver)) {
@@ -193,6 +217,10 @@ class Row {
             return false;
         }
 
+        if (this.cells.size() != other.cells.size()) {
+            return false;
+        }
+
         for (GeneralizedSymbolicSuffix s : this.cells.keySet()) {
             Cell c1 = this.cells.get(s);
             Cell c2 = other.cells.get(s);
@@ -201,10 +229,10 @@ class Row {
                 if (c1 == null && c2 == null) {
                     continue;
                 }
+            }
 
-                if (c1 == null || c2 == null) {
-                    return false;
-                }
+            if (c1 == null || c2 == null) {
+                return false;
             }
 
             if (!c1.couldBeEquivalentTo(c2)) {

@@ -71,6 +71,11 @@ public class LoginExampleSDT implements SymbolicDecisionTree {
     public boolean isAccepting() {
         return clazz == SDTClass.ACCEPT;
     }
+    
+    @Override
+    public boolean anyAccepting() {
+        return clazz == SDTClass.ACCEPT;
+    }
 
 	@Override
 	public SymbolicDecisionTree replace(Replacement relabeling) {

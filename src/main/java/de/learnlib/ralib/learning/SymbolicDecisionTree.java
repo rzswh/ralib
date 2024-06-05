@@ -61,4 +61,11 @@ public interface SymbolicDecisionTree {
      * @return 
      */
     public boolean isAccepting();
+    
+    /**
+     * true if any path in this tree is accepting
+     * 
+     * @return 
+     */
+    public boolean anyAccepting();
 }

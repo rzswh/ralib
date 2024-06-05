@@ -168,6 +168,21 @@ public class SDT implements SymbolicDecisionTree {
         return true;
     }
 
+    @Override
+    public boolean anyAccepting() {
+        if (this instanceof SDTLeaf) {
+            return ((SDTLeaf) this).anyAccepting();
+        } else {
+            for (Map.Entry<SDTGuard, SDT> e : children.entrySet()) {
+                if (e.getValue().anyAccepting()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     protected Map<SDTGuard, SDT> getChildren() {
         return this.children;
     }

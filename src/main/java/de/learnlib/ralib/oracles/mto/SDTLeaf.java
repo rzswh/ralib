@@ -80,6 +80,11 @@ public class SDTLeaf extends SDT {
     public boolean isAccepting() {
         return accepting;
     }
+
+    @Override
+    public boolean anyAccepting() {
+        return accepting;
+    }
     
     
     @Override
