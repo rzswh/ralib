@@ -23,6 +23,7 @@ public class IORandomWalkTraceGenerator implements TraceGenerator{
 	private ParameterizedSymbol error;
 	private SimulatorSUL target;
 	private InputSelector inpSelector;
+	private boolean debug;
 
 	public IORandomWalkTraceGenerator(Random rand, double stopProbability, int maxDepth,
 			InputSelector inpSelector, Constants constants,
@@ -47,6 +48,10 @@ public class IORandomWalkTraceGenerator implements TraceGenerator{
 	public void setError(ParameterizedSymbol error) {
 		this.error = error;
 	}
+
+	public void setRetrospective(boolean debug) {
+		this.debug = debug;
+	}
 	
 	/**
 	 * Generates a trace from the given location prefix. Does not include the prefix in the generated run. 
@@ -59,6 +64,9 @@ public class IORandomWalkTraceGenerator implements TraceGenerator{
 		for (int i=0; i<inLocPrefix.length(); i=i+2) {
 			PSymbolInstance out = target.step(inLocPrefix.getSymbol(i));
 			assert out.equals(inLocPrefix.getSymbol(i+1));
+			if (debug) {
+				System.out.println("Prefix step: "+target.getLocation() + " " +inLocPrefix.getSymbol(i)+" / "+out);
+			}
 		}
 		Word<PSymbolInstance> trace = inLocPrefix;
 		PSymbolInstance out;
@@ -79,6 +87,9 @@ public class IORandomWalkTraceGenerator implements TraceGenerator{
 				} else {
 					throw e;
 				}
+			}
+			if (debug) {
+				System.out.println("Prefix step: "+target.getLocation() + " " +next+" / "+out);
 			}
 			trace = trace.append(out);
 
