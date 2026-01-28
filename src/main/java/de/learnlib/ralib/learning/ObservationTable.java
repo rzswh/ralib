@@ -217,5 +217,9 @@ class ObservationTable {
         sb.append("***********************************************************************\n");
         return sb.toString();
     }
+
+    ObservationTableCheckpoint getCheckpoint() {
+        return ObservationTableCheckpoint.instantiate(inputs, components.keySet(), suffixes);
+    }
     
 }

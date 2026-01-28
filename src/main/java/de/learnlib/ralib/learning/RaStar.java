@@ -201,5 +201,9 @@ public class RaStar {
     public void setHypVerifier(HypVerifier hypVerifier) {
         this.hypVerifier = hypVerifier;
     }
-    
+
+    public ObservationTableCheckpoint getCheckpoint() {
+        return obs.getCheckpoint();
+    }
+
 }
