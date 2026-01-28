@@ -47,7 +47,7 @@ public class ObservationTableCheckpoint implements Serializable {
         List<DataRelation[][]> sufRelations = new ArrayList<>();
         List<DataRelation[]> preRelations = new ArrayList<>();
         
-        for (int i = 1; i <= suffix.getActions().size(); i++) {
+        for (int i = 1; i <= suffix.size(); i++) {
             sdv.add(suffix.getDataValue(i));
             DataRelation[] preRel = suffix.getPrefixRelations(i).stream().collect(Collectors.toList())
                     .toArray(DataRelation[]::new);
